@@ -1,11 +1,8 @@
 name: Build and Push Images
 
+# Automatic builds are paused during the security-assignment work.
+# Run this workflow manually only when image publication is intentionally needed.
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
 
 jobs:

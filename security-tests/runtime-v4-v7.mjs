@@ -103,6 +103,16 @@ assertStatus(
 );
 
 assertStatus(
+  'V4 reversed delivery transition is blocked',
+  await request(`${deliveryUrl}/delivery/${deliveryA}/status`, {
+    method: 'PATCH',
+    headers: { ...json({ status: 'ASSIGNED' }).headers, ...bearer(tokenFor({ id: driverA })) },
+    body: JSON.stringify({ status: 'ASSIGNED' }),
+  }),
+  409,
+);
+
+assertStatus(
   'V4 assigned driver can update delivery location',
   await request(`${deliveryUrl}/delivery/${deliveryA}/driver-location`, {
     method: 'PATCH',
@@ -147,6 +157,8 @@ const tamperedOrder = await request(`${orderUrl}/api/orders`, {
     paymentMethod: 'card',
     totalAmount: 1,
     currency: 'eur',
+    status: 'paid',
+    paymentStatus: 'paid',
     deliveryAddress: 'Synthetic Address A',
     phoneNumber: '0700000001',
   }),
@@ -168,10 +180,10 @@ assertBody('V7 login response does not expose an access token', login, (body) =>
 ));
 
 const setCookie = login.headers.get('set-cookie') ?? '';
-if (!setCookie.includes('accessToken=') || !setCookie.includes('refreshToken=') || !setCookie.includes('HttpOnly')) {
-  throw new Error('V7 login did not issue both HttpOnly session cookies');
+if (!setCookie.includes('accessToken=') || !setCookie.includes('refreshToken=') || !setCookie.includes('HttpOnly') || !setCookie.includes('SameSite=Strict')) {
+  throw new Error('V7 login did not issue both strict HttpOnly session cookies');
 }
-console.log('PASS V7 login issues HttpOnly access and refresh cookies');
+console.log('PASS V7 login issues strict HttpOnly access and refresh cookies');
 
 const cookies = setCookie
   .split(/, (?=[^;,]+=)/)
@@ -184,9 +196,18 @@ assertStatus(
   200,
 );
 
+assertStatus(
+  'V7 refresh without an approved origin is blocked',
+  await request(`${userUrl}/api/user/refresh`, {
+    method: 'POST',
+    headers: { Cookie: cookies },
+  }),
+  403,
+);
+
 const refreshed = await request(`${userUrl}/api/user/refresh`, {
   method: 'POST',
-  headers: { Cookie: cookies },
+  headers: { Cookie: cookies, Origin: 'http://localhost:5173' },
 });
 assertStatus('V7 refresh endpoint succeeds with the HttpOnly cookie', refreshed, 200);
 assertBody('V7 refresh response does not expose an access token', refreshed, (body) => body.accessToken === undefined);

@@ -17,6 +17,8 @@ const driverController = read('driver-service/src/controllers/driverController.j
 const driverAuth = read('driver-service/src/middleware/authMiddleware.js');
 const orderController = read('order-service/src/controller/order.controller.js');
 const userAuth = read('user-service/src/controllers/authController.js');
+const userRoutes = read('user-service/src/routes/userRoutes.js');
+const originMiddleware = read('user-service/src/middleware/originMiddleware.js');
 const userMiddleware = read('user-service/src/middleware/authMiddleware.js');
 const tokenUtils = read('user-service/src/utils/generateToken.js');
 const loginHook = read('frontend/src/Hooks/useLogin.jsx');
@@ -37,6 +39,9 @@ expect(orderController.includes("status: 'pending'"), 'V6 card orders are still 
 expect(!orderController.includes('const { items, paymentMethod, totalAmount'), 'V6 still accepts totalAmount as a create authority');
 
 expect(userAuth.includes(".cookie('accessToken'"), 'V7 access cookie is missing');
+expect(userAuth.includes("sameSite: 'strict'"), 'V7 cookies are not SameSite strict');
+expect(userRoutes.includes('requireSameOrigin'), 'V7 user mutations lack same-origin protection');
+expect(originMiddleware.includes("req.get('origin')"), 'V7 same-origin middleware is missing origin validation');
 expect(userMiddleware.includes('req.cookies?.accessToken'), 'V7 protected user routes do not read the session cookie');
 expect(!userAuth.includes('accessToken\n        });'), 'V7 login response still exposes an access token');
 expect(!tokenUtils.includes('console.log(refreshToken)'), 'V7 refresh token is still logged');

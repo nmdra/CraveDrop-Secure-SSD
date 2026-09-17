@@ -12,4 +12,4 @@ HTTP/1.1 200 OK
 
 The JSON response contains no `accessToken`. The response sets `accessToken` and `refreshToken` as HttpOnly, SameSite cookies. A protected profile request using those cookies returns HTTP 200. Refresh also returns HTTP 200 without placing an access token in JSON.
 
-The customer frontend no longer persists a bearer token in localStorage or adds an Authorization interceptor. The user-service refresh path no longer logs token material. Sensitive values are not included in this evidence.
+A refresh request without the approved frontend origin returns HTTP 403. The same request with `Origin: http://localhost:5173` returns HTTP 200. Cookies use `HttpOnly; SameSite=Strict`; production enables `Secure`. The customer frontend no longer persists a bearer token in localStorage or adds an Authorization interceptor. The user-service refresh path no longer logs token material. Sensitive values are not included in this evidence.

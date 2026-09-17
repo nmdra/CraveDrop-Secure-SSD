@@ -1,172 +1,103 @@
-<a href="cravedrop.logo">
-  <img src="https://github.com/user-attachments/assets/6d81d67d-0c6c-420d-abd9-593d4ac2a9c6" alt="Typing SVG" align="left" width="340" height="120" />
-</a>
+# CraveDrop Secure
 
-# **CraveDrop Delivery**
-> ***Food ordering and delivery platform built with microservices architecture.***
+A secured version of the CraveDrop food-ordering and delivery platform. This repository is the modified submission for the Secure Software Development assignment.
 
----
-[![Docker Build](https://img.shields.io/badge/docker-build-blue)](https://hub.docker.com/)
-[![Kubernetes Ready](https://img.shields.io/badge/k8s-ready-blueviolet)](https://kubernetes.io/)
-[![License](https://img.shields.io/github/license/your-username/cravedrop-delivery)](./LICENSE)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue)](https://www.postgresql.org/)
-[![RabbitMQ](https://img.shields.io/badge/RabbitMQ-Messaging-orange)](https://www.rabbitmq.com/)
+## Assignment links
 
-**CraveDrop** is a food ordering and delivery platform built with microservices architecture, enabling users to place orders, track deliveries, and interact with restaurants seamlessly.
+- Original vulnerable project: <https://github.com/nmdra/CraveDrop>
+- Modified secure project: <https://github.com/nmdra/CraveDrop-Secure-SSD>
+- Immutable vulnerable baseline: `cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`
+- Baseline tag: `baseline-vulnerable`
+- Report: [`report/Report.pdf`](report/Report.pdf)
+- Video: **PENDING**. Add the final unlisted YouTube URL before submission.
 
-- [CraveDrop Delivery](#cravedrop-delivery)
-  - [Features](#features)
-  - [Architecture](#architecture)
-  - [CI/CD](#cicd)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Setup](#setup)
-  - [API Documentation](#api-documentation)
+## Team
 
-## Features
+| Member | Registration number |
+|---|---|
+| Hansaja A. M. G | IT22171856 |
+| Dharmasiri I. D. N. D | IT22254320 |
+| Sanjeewa P. D. L. B | IT22629708 |
+| Aluthwaththa A. W. D. S. M | IT22267290 |
 
-- **User Management**: User authentication and profile management
-- **Order Management**: Place, track, and manage orders
-- **Restaurant Management**: Browse and filter restaurants
-- **Delivery Management**: Manage delivery service
-- **Payment Integration**: Secure order payments
-- **Real-time Notifications**: Email and SMS updates via RabbitMQ
+## Security work
 
-## Architecture
+Seven distinct vulnerabilities were reproduced against the immutable baseline, fixed, and tested with blocked-attack and authorized-control checks.
 
-- Microservices (Node.js, Go, etc.)
-- RabbitMQ for messaging
-- PostgreSQL for data storage
-- Docker + Kubernetes for deployment
-- API Gateway with NGINX
+| ID | Security issue | Secure result |
+|---|---|---|
+| V1 | Missing payment authentication | Payment actions require an authenticated customer. |
+| V2 | Order IDOR/BOLA | Order access is scoped to the verified owner. |
+| V3 | Order mass assignment | Sensitive order fields are server-owned and rejected from client updates. |
+| V4 | Unauthorized delivery mutation | Only the assigned driver can make valid delivery updates. |
+| V5 | Broken driver administration authorization | A driver can update only their own availability. |
+| V6 | Payment amount and state manipulation | The server calculates totals and owns payment state. |
+| V7 | Token exposure and session design | Browser sessions use strict HttpOnly cookies without bearer-token JSON or storage. |
+
+The project also adds one customer login feature using WSO2 Identity Server 7.1.0 and OpenID Connect Authorization Code flow with S256 PKCE.
 
 ```mermaid
-%%{init: {"theme": "default"}}%%
-C4Container
-title Food Delivery Platform - Container Diagram
-
-Person(user, "User", "Orders food via web/mobile app")
-
-Container_Boundary(client, "Client") {
-    Container(frontend, "Frontend App", "React/JavaScript", "User interface for ordering and tracking")
-}
-
-Container_Boundary(gateway, "API Gateway") {
-    Container(api_gw, "NGINX Gateway", "NGINX", "Routes API requests")
-}
-
-Container_Boundary(svc, "Services") {
-    Container(user_svc, "User Service", "Node.js", "Authentication and User management")
-    Container(order_svc, "Order Service", "Node.js", "Order placement and tracking")
-    Container(rest_svc, "Restaurant Service", "Node.js", "Restaurant data and menus")
-    Container(payment_svc, "Payment Service", "Node.js", "Payment processing")
-    Container(notif_svc, "Notification Service", "Node.js", "Notification delivery")
-    ContainerQueue(rabbit, "RabbitMQ", "AMQP", "Handles async events and jobs")
-    Container(email, "Email Service", "SMTP", "Sends email notifications")
-    Container(sms, "SMS Service", "SMS Gateway", "Delivers SMS notifications")
-}
-
-ContainerDb(user_db, "User DB", "PostgreSQL", "Stores users")
-ContainerDb(order_db, "Order DB", "PostgreSQL", "Stores orders")
-ContainerDb(rest_db, "Restaurant DB", "PostgreSQL", "Stores restaurants")
-ContainerDb(payment_db, "Payment DB", "PostgreSQL", "Stores payments")
-ContainerDb(notif_db, "Notification DB", "PostgreSQL", "Stores notification records")
-
-Rel(user, frontend, "Uses", "HTTPS")
-Rel(frontend, api_gw, "API requests", "HTTPS")
-
-Rel(api_gw, user_svc, "Routes", "REST")
-Rel(api_gw, order_svc, "Routes", "REST")
-Rel(api_gw, rest_svc, "Routes", "REST")
-Rel(api_gw, payment_svc, "Routes", "REST")
-Rel(api_gw, notif_svc, "Routes", "REST")
-
-Rel(user_svc, user_db, "Reads/Writes")
-Rel(order_svc, order_db, "Reads/Writes")
-Rel(rest_svc, rest_db, "Reads/Writes")
-Rel(payment_svc, payment_db, "Reads/Writes")
-Rel(notif_svc, notif_db, "Reads/Writes")
-
-Rel(notif_svc, rabbit, "Publishes events", "AMQP")
-Rel(email, rabbit, "Consumes email jobs", "AMQP")
-Rel(sms, rabbit, "Consumes SMS jobs", "AMQP")
-Rel(notif_svc, email, "Sends email")
-Rel(notif_svc, sms, "Sends SMS")
-
-%% ' Layout optimization for readability
-UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="2")
-
-%% ' Offset relationships to minimize overlap
-UpdateRelStyle(api_gw, user_svc, $offsetX="-60", $offsetY="-35")
-UpdateRelStyle(api_gw, order_svc, $offsetX="30", $offsetY="-35")
-UpdateRelStyle(api_gw, rest_svc, $offsetX="-60", $offsetY="35")
-UpdateRelStyle(api_gw, payment_svc, $offsetX="30", $offsetY="35")
+flowchart TD
+    Browser[Customer browser] --> Gateway[NGINX gateway]
+    Gateway --> User[User service]
+    Gateway --> Order[Order service]
+    Gateway --> Payment[Payment service]
+    Gateway --> Delivery[Delivery service]
+    Gateway --> Driver[Driver service]
+    Browser --> WSO2[WSO2 Identity Server]
+    WSO2 --> User
 ```
 
-## CI/CD
+## Evidence and documentation
 
-We use **GitHub Actions** to automate building and pushing Docker images.
+- [`docs/finding-matrix.md`](docs/finding-matrix.md): finding, evidence, test, and commit index.
+- [`docs/report-notes.md`](docs/report-notes.md): report source notes and residual risks.
+- [`docs/oidc-setup.md`](docs/oidc-setup.md): local WSO2 setup and security controls.
+- [`docs/contributions.md`](docs/contributions.md): group work allocation and evidence.
+- [`docs/video-runbook.md`](docs/video-runbook.md): 17–18 minute demonstration plan.
+- [`docs/submission-checklist.md`](docs/submission-checklist.md): clean-clone and ZIP checks.
 
-- **Trigger**: 
-  - On **tag push** matching `v*.*.*` (e.g., `v1.0.0`)
-  - Manual trigger via **workflow_dispatch**
-
-- **Steps**:
-  1. Checkout repository
-  2. Log in to **GitHub Container Registry** (GHCR)
-  3. Set up **Docker Buildx** and **QEMU** for multi-platform builds
-  4. Use **docker-bake-action** to build and push images defined in `docker-bake.hcl`
-  5. Images are tagged and pushed to `ghcr.io`
-
-```yaml
-on:
-  tags:
-    - 'v*.*.*'
-  workflow_dispatch:
-```
-
-```bash
-ghcr.io/<your-org-or-username>/<service-name>:<version>
-```
-
-> [!NOTE]
-> - Images include Git commit SHA labels for traceability.
-> - Build cache is enabled via GitHub Actions Cache (`type=gha`) for faster rebuilds.
-> - Multi-platform support enabled with QEMU (`amd64`, `arm64`).
-
-## Getting Started
+## Local development
 
 ### Prerequisites
 
-- Docker
-- Kubernetes (Minikube, Kind, or cloud)
-- Kustomize (built into `kubectl` v1.14+)
+- Docker and Docker Compose
+- Node.js 20 for the OIDC mocked regression test
+- Local test configuration only. Never commit `.env` files, credentials, cookies, or tokens.
 
-### Setup
+### Start the application
 
-1. Clone the repository:
+1. Copy each required `.env.example` file to an ignored local `.env` file.
+2. Add only local test values.
+3. Start the core services:
+
    ```bash
-   git clone https://github.com/your-username/cravedrop-delivery.git
-   cd cravedrop-delivery
+   docker compose up --build
    ```
 
-2. Build and run locally (optional):
+4. Start WSO2 for the OIDC demonstration:
+
    ```bash
-   docker-compose up --build
+   docker compose --profile oidc up wso2is
    ```
 
-3. Deploy to Kubernetes using **Kustomize**:
-   ```bash
-   kubectl apply -k k8s/kustomization/base
-   ```
+5. Follow [`docs/oidc-setup.md`](docs/oidc-setup.md) to register the local OIDC client and synthetic customer.
 
-   > Adjust the path (`overlays/dev`) based on your environment (e.g., `prod`, `staging`).
+## Security verification
 
-## API Documentation
+```bash
+# Create and verify deterministic synthetic fixtures.
+node scripts/seed-security-fixtures.mjs reset
+node scripts/seed-security-fixtures.mjs verify
 
-- Full API reference: [View on Postman](https://documenter.getpostman.com/view/33227780/2sB2ca8L6c)
+# Run focused V1–V7 checks as listed in the finding matrix.
+# Run OIDC checks under Node 20.
+node security-tests/regression-oidc.mjs
+NODE_ENV=development node security-tests/oidc-mocked.mjs
+```
 
-## License
+The evidence uses synthetic fixtures and redacted values only. Dependency audit results are recorded separately and are not counted as application vulnerabilities without reproduced impact. The OWASP ZAP scan is deferred and is not claimed as completed.
 
-MIT License - see [LICENSE](LICENSE) for details.
+## Licence
 
+MIT. See [LICENSE](LICENSE).

@@ -23,6 +23,9 @@ The route now authenticates the actor and the controller requires the assigned d
 Driver A token PATCH status ASSIGNED -> PICKED_UP
 HTTP/1.1 200 OK
 
+Driver A token PATCH reversed status PICKED_UP -> ASSIGNED
+HTTP/1.1 409 Conflict
+
 Driver A token PATCH driver location
 HTTP/1.1 200 OK
 ```

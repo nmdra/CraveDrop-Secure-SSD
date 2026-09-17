@@ -3,23 +3,24 @@ import { registerUser, getUserProfile, updateUser, deleteUserAccount, getUserByI
 import { auth, logout, refreshToken, validate } from '../controllers/authController.js';
 import { registerUserValidator, updateUserValidator } from '../validators/userValidators.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
+import { requireSameOrigin } from '../middleware/originMiddleware.js';
 
 const router = Router();
 
 // User routes
 router
     .route('')
-    .put(authenticateUser, updateUserValidator, updateUser)
-    .delete(authenticateUser, deleteUserAccount)
+    .put(requireSameOrigin, authenticateUser, updateUserValidator, updateUser)
+    .delete(requireSameOrigin, authenticateUser, deleteUserAccount)
     .get(authenticateUser, getUserProfile)
 
 router.route('/register').post(registerUserValidator, registerUser)
 
 // Auth routes
 router.route('/auth').post(auth)
-router.route('/refresh').post(refreshToken);
+router.route('/refresh').post(requireSameOrigin, refreshToken);
 router.route('/validate').get(validate)
-router.route('/logout').post(logout)
+router.route('/logout').post(requireSameOrigin, logout)
 
 // router.route('/:id').get(getUserById)
 

@@ -19,8 +19,8 @@ node security-tests/baseline-check.mjs baseline-vulnerable
 node security-tests/regression-v1-v3.mjs baseline-vulnerable
 node security-tests/regression-v1-v3.mjs WORKTREE
 node security-tests/regression-v4-v7.mjs
-JWT_SECRET=local-security-test-secret node security-tests/runtime-v1-v3.mjs
-JWT_SECRET=local-security-test-secret node security-tests/runtime-v4-v7.mjs
+JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v1-v3.mjs
+JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v4-v7.mjs
 ```
 
 The runtime commands require the affected local services and synthetic fixtures. Do not print or commit JWTs, cookies, secrets, or unredacted logs.

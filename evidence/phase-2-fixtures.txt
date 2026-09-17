@@ -1,0 +1,22 @@
+# Phase 2 fixture verification
+
+Command:
+
+```text
+node scripts/seed-security-fixtures.mjs reset
+node scripts/seed-security-fixtures.mjs verify
+```
+
+Observed result on the local checkout:
+
+```text
+Security fixtures reset to the deterministic synthetic A/B dataset.
+Customer A: 00000000-0000-4000-8000-000000000001
+Customer B: 00000000-0000-4000-8000-000000000002
+Order A: 0000000000000000000000e1
+Driver A: 0000000000000000000000a1
+Driver B: 0000000000000000000000b1
+Security fixtures verified.
+```
+
+The active fixture file is ignored by Git and contains only the deterministic synthetic fixture pack. The committed `.env.example` files contain placeholders/local-development values only. No real credentials, tokens, or customer data are present.

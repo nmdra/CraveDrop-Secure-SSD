@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "description": "Synthetic A/B fixtures for local security demonstrations. These values are not production credentials.",
+  "customers": {
+    "customerA": {
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "email": "customer-a@security.test",
+      "password": "CustomerA-Local-Only-123!",
+      "name": "Customer A"
+    },
+    "customerB": {
+      "userId": "00000000-0000-4000-8000-000000000002",
+      "email": "customer-b@security.test",
+      "password": "CustomerB-Local-Only-123!",
+      "name": "Customer B"
+    }
+  },
+  "drivers": {
+    "driverA": {
+      "driverId": "0000000000000000000000a1",
+      "email": "driver-a@security.test",
+      "password": "DriverA-Local-Only-123!",
+      "name": "Driver A"
+    },
+    "driverB": {
+      "driverId": "0000000000000000000000b1",
+      "email": "driver-b@security.test",
+      "password": "DriverB-Local-Only-123!",
+      "name": "Driver B"
+    }
+  },
+  "restaurant": {
+    "restaurantId": "0000000000000000000000c1",
+    "email": "restaurant-owner@security.test",
+    "name": "Security Test Restaurant"
+  },
+  "products": {
+    "burger": {
+      "productId": "0000000000000000000000d1",
+      "name": "Synthetic Burger",
+      "price": 1250,
+      "currency": "usd"
+    },
+    "drink": {
+      "productId": "0000000000000000000000d2",
+      "name": "Synthetic Drink",
+      "price": 300,
+      "currency": "usd"
+    }
+  },
+  "orders": {
+    "customerAOrder": {
+      "orderId": "0000000000000000000000e1",
+      "userId": "00000000-0000-4000-8000-000000000001",
+      "totalAmount": 2800,
+      "currency": "usd",
+      "paymentMethod": "card",
+      "status": "pending"
+    }
+  },
+  "delivery": {
+    "customerAOrderDelivery": {
+      "deliveryId": "0000000000000000000000f1",
+      "orderId": "0000000000000000000000e1",
+      "customerId": "00000000-0000-4000-8000-000000000001",
+      "driverId": "0000000000000000000000a1",
+      "status": "ASSIGNED",
+      "location": [79.8612, 6.9271]
+    }
+  }
+}

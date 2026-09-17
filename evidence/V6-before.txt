@@ -1,0 +1,23 @@
+# V6: Payment amount manipulation
+
+Baseline reference: baseline-vulnerable
+Primary mapping: CWE-841: Improper Enforcement of Behavioral Workflow
+
+## Reproduction request
+
+```bash
+curl -i -X POST http://localhost:5000/api/orders \
+  -H 'Content-Type: application/json' \
+  --data '{"userId":"CUSTOMER_A","paymentMethod":"card","totalAmount":1,"items":[...]} '
+```
+
+## Baseline source result
+
+- PASS: payment-service/src/controller/payment.controllers.js:10 contains `const { amount, currency } = req.body;`
+- PASS: payment-service/src/controller/payment.controllers.js:10 contains `amount,`
+- PASS: order-service/src/controller/order.controller.js:48 contains `const finalAmount = paymentMethod === 'card' ? totalAmount : calculatedTotalAmount;`
+- PASS: order-service/src/controller/order.controller.js:59 contains `status: paymentMethod === 'card' ? 'paid' : 'pending',`
+
+Impact: The client-selected amount is sent to Stripe and card orders are marked paid without server-side confirmation that the amount matches trusted product prices.
+
+This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.

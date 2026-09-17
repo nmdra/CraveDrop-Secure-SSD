@@ -1,0 +1,23 @@
+# V4: Unauthorised delivery mutation
+
+Baseline reference: baseline-vulnerable
+Primary mapping: CWE-862: Missing Authorization
+
+## Reproduction request
+
+```bash
+curl -i -X PATCH http://localhost:3010/delivery/0000000000000000000000f1/status \
+  -H 'Content-Type: application/json' \
+  --data '{"status":"DELIVERED"}'
+```
+
+## Baseline source result
+
+- PASS: delivery-service/src/routes/deliveryRoutes.js:31 contains `router.patch('/:id/status', updateDeliveryStatus);`
+- PASS: delivery-service/src/controllers/deliveryController.js:422 contains `const delivery = await Delivery.findById(id);`
+- PASS: delivery-service/src/controllers/deliveryController.js:431 contains `delivery.status = status;`
+- PASS: delivery-service/src/controllers/deliveryController.js:496 contains `delivery.driverlocation = location;`
+
+Impact: The status and location mutations identify a delivery by URL id but do not authenticate or verify the assigned driver before saving changes.
+
+This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.

@@ -1,0 +1,21 @@
+# V2: Order IDOR/BOLA
+
+Baseline reference: baseline-vulnerable
+Primary mapping: CWE-639: Authorization Bypass Through User-Controlled Key
+
+## Reproduction request
+
+```bash
+curl -i http://localhost:5000/api/orders/0000000000000000000000e1 \
+  -H 'Authorization: Bearer CUSTOMER_B_TOKEN'
+```
+
+## Baseline source result
+
+- PASS: order-service/src/routes/order.route.js:14 contains `router.get('/:id', getOrderById);`
+- PASS: order-service/src/controller/order.controller.js:101 contains `const order = await Order.findById(req.params.id);`
+- PASS: order-service/src/controller/order.controller.js:125 contains `const deleted = await Order.findByIdAndDelete(req.params.id);`
+
+Impact: The record lookup and delete operation use only the caller-controlled order id and do not constrain the record to the authenticated customer.
+
+This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.

@@ -1,0 +1,23 @@
+# V7: Sensitive session-token exposure
+
+Baseline reference: baseline-vulnerable
+Primary mapping: CWE-922: Insecure Storage of Sensitive Information
+
+## Reproduction request
+
+```bash
+curl -i -X POST http://localhost:5000/api/user/auth \
+  -H 'Content-Type: application/json' \
+  --data '{"email":"customer-a@security.test","password":"CustomerA-Local-Only-123!"}'
+```
+
+## Baseline source result
+
+- PASS: user-service/src/controllers/authController.js:15 contains `accessToken`
+- PASS: user-service/src/controllers/authController.js:39 contains `console.log(refreshToken)`
+- PASS: frontend/src/Hooks/useLogin.jsx:25 contains `localStorage.setItem('token', accessToken)`
+- PASS: frontend/src/axios.jsx:11 contains `console.log(token)`
+
+Impact: The access token is returned to browser JavaScript, persisted in localStorage, and logged by the frontend; refresh-token material is also logged by the user service.
+
+This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.

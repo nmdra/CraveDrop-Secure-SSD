@@ -1,130 +1,299 @@
 \documentclass[11pt]{article}
-\usepackage[margin=0.85in]{geometry}
+\usepackage[margin=0.82in]{geometry}
 \usepackage[table]{xcolor}
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{longtable}
-\usepackage{hyperref}
-\usepackage{parskip}
+\usepackage{booktabs}
 \usepackage{enumitem}
-\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=black}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{url}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,pdftitle={CraveDrop Security Assessment and Secure OIDC Login}}
+\setlist[itemize]{noitemsep,topsep=3pt}
+\setlist[enumerate]{noitemsep,topsep=3pt}
+\setlength{\headheight}{14pt}
+\setlength{\tabcolsep}{4pt}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{CraveDrop Secure}
+\rhead{Security assessment report}
+\cfoot{\thepage}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\evidence}[1]{{\small\url{#1}}}
+\emergencystretch=3em
 \newcommand{\finding}[1]{\subsection{#1}}
-\title{CraveDrop Security Assessment and Secure OIDC Login}
-\author{Hansaja A. M. G (IT22171856) \and Dharmasiri I. D. N. D (IT22254320) \\ Sanjeewa P. D. L. B (IT22629708) \and Aluthwaththa A. W. D. S. M (IT22267290)}
-\date{September 2026}
+\newcommand{\baseline}{\textbf{Baseline reproduction.} }
+\newcommand{\impact}{\textbf{Impact.} }
+\newcommand{\fix}{\textbf{Fix.} }
+\newcommand{\control}{\textbf{Regression controls.} }
+\newcommand{\residual}{\textbf{Residual risk.} }
+
 \begin{document}
-\maketitle
+\begin{titlepage}
+\centering
+\vspace*{1.3in}
+{\Large SE4030 --- Secure Software Development\par}
+\vspace{0.25in}
+{\Huge\bfseries CraveDrop Security Assessment\par}
+\vspace{0.12in}
+{\Large and Secure OpenID Connect Customer Login\par}
+\vspace{0.5in}
+\rule{0.8\textwidth}{0.6pt}\par
+\vspace{0.35in}
+{\large Assignment report\par}
+\vfill
+\begin{tabular}{ll}
+Hansaja A. M. G & IT22171856 \\
+Dharmasiri I. D. N. D & IT22254320 \\
+Sanjeewa P. D. L. B & IT22629708 \\
+Aluthwaththa A. W. D. S. M & IT22267290 \\
+\end{tabular}
+\vfill
+{\large September 2026\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
 
 \section{Executive summary}
-This report documents a security assessment of CraveDrop, a food-ordering and delivery microservice application. The team preserved the vulnerable application at immutable tag \texttt{baseline-vulnerable}. The tag resolves to upstream commit \texttt{cb68a377f5b8cdc3b12f86883ac6fb703ef5e405}.
+This report presents a security assessment of CraveDrop, a food-ordering and delivery application implemented as microservices. The work preserves the original vulnerable source at immutable tag \evidence{baseline-vulnerable}, which resolves to commit \evidence{cb68a377f5b8cdc3b12f86883ac6fb703ef5e405}. The baseline was not altered.
 
-The assessment reproduced, fixed, and regression-tested seven distinct weaknesses. The work also adds one WSO2 Identity Server customer-login feature. The feature uses OpenID Connect Authorization Code flow with S256 PKCE and a CraveDrop HttpOnly cookie session. It is a feature, not an eighth counted vulnerability.
+The team identified, reproduced, fixed, and regression-tested seven distinct vulnerabilities. The findings cover missing authentication, object-level authorization, mass assignment, function-level authorization, payment workflow integrity, and token disclosure. Each counted finding has a different root cause. The evidence includes a redacted live baseline request, a focused code change, a blocked-attack check, and a legitimate authorized control.
 
-All tests use synthetic fixtures. Evidence files contain redacted request and response data only. The detailed evidence index is \texttt{docs/finding-matrix.md}.
+The project also adds one customer-login feature using WSO2 Identity Server 7.1.0. It uses OpenID Connect Authorization Code flow with S256 PKCE. The application validates the identity token server-side and issues its own strict HttpOnly session cookies. This feature is separate from the seven counted vulnerabilities.
 
-\section{Project eligibility and method}
-The original project is \href{https://github.com/nmdra/CraveDrop}{nmdra/CraveDrop}. It is an MIT-licensed food-ordering and delivery application. The selected default-branch baseline is dated 17 July 2025. The assessed work predates the July 2026 semester start.
+All fixtures are synthetic. No secrets, live customer data, bearer tokens, cookies, or unredacted logs are included in the repository or this report.
 
-The method used a fixed baseline, deterministic Customer A and Customer B fixtures, live baseline requests, focused code changes, and negative plus positive regression controls. A finding was counted only when it had a distinct root cause, a baseline attack, an impact, a focused fix, a blocked attack, an authorized control, and a residual-risk statement.
+\section{Assignment alignment and project eligibility}
+The assignment requires an application with sufficient scope, at least seven distinct vulnerabilities, fixes, discussion of remaining risks and preventive practices, an OAuth or OpenID Connect feature, and evidence of individual contribution. This report addresses those requirements as follows.
 
-\section{System and trust boundaries}
-CraveDrop uses separate user, order, payment, delivery, and driver services. The API gateway routes browser requests to these services. The services use PostgreSQL or MongoDB, depending on the service. The security fixes enforce identity and authorization at the affected service boundary. The gateway is not treated as the only authorization control.
+\begin{longtable}{P{0.29\linewidth}P{0.65\linewidth}}
+\toprule
+\textbf{Assignment requirement} & \textbf{Evidence in this submission} \\
+\midrule
+\endhead
+Application scope and suitability & CraveDrop has separate user, order, payment, delivery, driver, restaurant, notification, email, and SMS components. It is a food-ordering application, not an intentionally vulnerable learning application. \\
+Seven distinct vulnerabilities & Sections \ref{sec:findings} and \ref{sec:verification} describe V1--V7, their distinct root causes, before evidence, fixes, and controls. \\
+OAuth or OpenID Connect feature & Section \ref{sec:oidc} documents a WSO2 OIDC customer login using Authorization Code with S256 PKCE. \\
+Discussion and unfixed risks & Sections \ref{sec:remaining} and \ref{sec:prevention} list remaining vulnerabilities, reasons, and preventive practices. \\
+Individual contribution & Section \ref{sec:contributions} maps allocated work to commits, tests, evidence, and the planned presentation segments. \\
+\bottomrule
+\end{longtable}
 
-\clearpage
-\section{Finding summary}
-\begin{longtable}{p{0.06\linewidth}p{0.26\linewidth}p{0.25\linewidth}p{0.31\linewidth}}
-\rowcolor{gray!20} ID & Weakness & Mapping & Result \\
-V1 & Missing payment authentication & CWE-306, OWASP API1 & Anonymous payment actions return 401. \\
-V2 & Order IDOR or BOLA & CWE-639, OWASP API1 & Foreign customer access is blocked. \\
-V3 & Order mass assignment & CWE-915, OWASP API3 & Server-owned fields are rejected. \\
-V4 & Delivery mutation authorization & CWE-862, OWASP API5 & Only the assigned driver can mutate delivery state. \\
-V5 & Driver administration authorization & CWE-862, OWASP API5 & A driver can update only own availability. \\
-V6 & Payment amount and state manipulation & CWE-841, API business logic & The server calculates price and owns payment state. \\
-V7 & Token exposure and session design & CWE-922, CWE-532, OWASP API2 & Tokens leave JSON, storage, and logs. \\
+The original project is \href{https://github.com/nmdra/CraveDrop}{nmdra/CraveDrop} and uses the MIT licence. The selected default-branch baseline is dated 17 July 2025, before the July 2026 semester start. The modified repository is \href{https://github.com/nmdra/CraveDrop-Secure-SSD}{nmdra/CraveDrop-Secure-SSD}. The eligibility record is in \evidence{UPSTREAM.md} and \evidence{docs/eligibility-evidence.md}.
+
+\section{Application scope and assessment method}
+\subsection{Architecture and trust boundaries}
+CraveDrop exposes a browser frontend through an NGINX gateway. The user service uses PostgreSQL. The order, payment, delivery, and driver services use separate service boundaries and databases. RabbitMQ supports asynchronous notification work. The assessment does not assume that gateway routing supplies authentication. Each changed controller or route checks identity and authorization at the relevant service boundary.
+
+The principal types used in the tests are Customer A, Customer B, the assigned driver, and an unrelated driver. This makes the authorization checks reproducible without real personal data.
+
+\subsection{Method}
+The team used the following evidence-first procedure.
+\begin{enumerate}
+  \item Preserve the upstream source at \evidence{baseline-vulnerable}.
+  \item Create deterministic synthetic A/B customer, driver, restaurant, product, order, and delivery fixtures.
+  \item Run a redacted live HTTP attack against the baseline.
+  \item Apply the smallest focused fix that preserves a valid authorized path.
+  \item Run a negative regression test and a positive authorized control.
+  \item Link the evidence, test, and fix commit in \evidence{docs/finding-matrix.md}.
+\end{enumerate}
+
+A 401 or 403 response alone does not establish a complete fix. Each test also proves that an authorized synthetic principal can use the protected function.
+
+\subsection{Scope limits}
+The assessment counts only V1--V7. Delivery and notification BOLA variants were retained as backup observations, not counted as extra findings. Dependency advisories from \evidence{npm audit} are also not counted without a reproduced application impact. This avoids reporting multiple URLs with the same root cause as separate vulnerabilities.
+
+\section{Finding summary}\label{sec:findings}
+\begin{longtable}{P{0.055\linewidth}P{0.25\linewidth}P{0.22\linewidth}P{0.38\linewidth}}
+\toprule
+\textbf{ID} & \textbf{Finding} & \textbf{Classification} & \textbf{Verified secure result} \\
+\midrule
+\endhead
+V1 & Missing payment authentication & CWE-306; OWASP API1 & Anonymous payment actions return 401; an authenticated customer reaches the payment-start handler. \\
+V2 & Order IDOR/BOLA & CWE-639; OWASP API1 & A foreign customer cannot read the other customer's order; the owner can. \\
+V3 & Order mass assignment & CWE-915; OWASP API3 & Client attempts to set protected order fields return 400; valid authorized actions work. \\
+V4 & Unauthorized delivery mutation & CWE-862; OWASP API5 & Only the assigned driver can make allowed status and location updates. \\
+V5 & Broken driver administration authorization & CWE-862; OWASP API5 & A driver can update own availability, not another driver's. \\
+V6 & Payment amount and state manipulation & CWE-841; API business logic & The server calculates the amount and creates a pending order despite tampered values. \\
+V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API2 & No bearer token is returned in JSON, stored in browser storage, or logged. \\
+\bottomrule
 \end{longtable}
 
 \finding{V1: Missing authentication on payment actions}
-\textbf{Baseline attack.} An anonymous request to \texttt{POST /api/payments/create-payment-intent} reached the payment handler. It did not receive an authentication error.
+\baseline An anonymous request to \evidence{POST /api/payments/create-payment-intent} reached the payment handler. It did not receive an authentication error. The redacted live response is \evidence{evidence/V1-before.txt}.
 
-\textbf{Impact.} An attacker can invoke a payment action without a customer identity. This can consume payment-provider resources and bypass the intended customer boundary.
+\impact An unauthenticated actor could invoke a payment action, consume payment-provider resources, and bypass the intended customer boundary.
 
-\textbf{Fix and result.} Payment routes now require a verified Bearer JWT. The caller identity comes from the verified token. The anonymous request returns 401. An authenticated synthetic customer reaches the payment-start handler.
+\fix Payment routes now require a verified Bearer JWT. The service derives the caller identity from the verified token rather than request input.
 
-\textbf{Residual risk.} The local control reaches a synthetic Stripe error. It does not prove a real card charge.
+\control The same anonymous action returns 401. An authenticated synthetic customer reaches the payment-start handler. The local Stripe test configuration rejects the request after authorization, which proves the authorization boundary but not a real card charge. See \evidence{evidence/V1-after.txt}, \evidence{security-tests/runtime-v1-v3.mjs}, commits \evidence{4904430} and \evidence{2e7d8bf}.
 
-\finding{V2: Order IDOR or BOLA}
-\textbf{Baseline attack.} An unauthenticated request read Customer A's synthetic order by order ID.
+\residual Stripe configuration and provider-side controls remain necessary. This assessment does not process a live card charge.
 
-\textbf{Impact.} An attacker can view or alter another customer's order if the order ID is known.
+\finding{V2: Order insecure direct object reference}
+\baseline An unauthenticated request read Customer A's synthetic order by order ID. The request returned the order record. See \evidence{evidence/V2-before.txt}.
 
-\textbf{Fix and result.} Order reads and mutations require an authenticated customer. The query includes both order ID and verified customer ID. Customer B receives 404 for Customer A's order. Customer A can read the owned order.
+\impact An attacker who knows or obtains an order ID could read or modify another customer's order.
 
-\textbf{Residual risk.} Every new order route must apply the same ownership scope.
+\fix Order reads and mutations now require an authenticated customer. The controller scopes the order query to both the requested order ID and the verified customer ID.
+
+\control Customer B receives 404 when requesting Customer A's order. Customer A can read the owned order. Evidence is \evidence{evidence/V2-after.txt}; the runtime control is \evidence{security-tests/runtime-v1-v3.mjs}; the commits are \evidence{4904430} and \evidence{2e7d8bf}.
+
+\residual The order ID remains an identifier. Every future order route must preserve the ownership scope.
 
 \finding{V3: Order mass assignment}
-\textbf{Baseline attack.} An unauthenticated order update supplied \texttt{userId}, \texttt{totalAmount}, \texttt{status}, and \texttt{createdAt}. The service persisted client-controlled values.
+\baseline An unauthenticated order update supplied \evidence{userId}, \evidence{totalAmount}, \evidence{status}, and \evidence{createdAt}. The baseline persisted these client-controlled fields. See \evidence{evidence/V3-before.txt}.
 
-\textbf{Impact.} A caller can alter ownership, price, lifecycle state, or audit data.
+\impact A caller could alter ownership, price, lifecycle state, or audit data.
 
-\textbf{Fix and result.} The controller rejects protected fields and allow-lists customer-editable values. The server owns identity, price, payment state, and timestamps. Protected fields return 400. Valid authorized updates and order creation succeed.
+\fix The controller rejects protected fields and allow-lists only supported customer-editable fields. The server owns order identity, price, payment state, and timestamps.
 
-\textbf{Residual risk.} New editable fields require explicit review before they join the allow-list.
+\control A payload containing protected fields returns 400. A valid authorized update and order creation succeed. See \evidence{evidence/V3-after.txt}, \evidence{security-tests/runtime-v1-v3.mjs}, commits \evidence{4904430} and \evidence{2e7d8bf}.
+
+\residual A new editable field must undergo explicit review before it is added to the allow-list.
 
 \finding{V4: Unauthorized delivery mutation}
-\textbf{Baseline attack.} An anonymous caller changed a delivery status. The same boundary accepted a location update.
+\baseline An anonymous request changed a delivery status, and the same boundary accepted driver-location changes. The baseline evidence is \evidence{evidence/V4-before.txt}.
 
-\textbf{Impact.} An attacker can falsify delivery progress or tracking data.
+\impact An attacker could falsify delivery progress or tracking data.
 
-\textbf{Fix and result.} Delivery writes require a valid driver JWT, an assigned-driver match, and an allow-listed state transition. Anonymous, customer, and unrelated-driver writes fail. The assigned driver can make the valid status and location updates. A reverse transition returns 409.
+\fix Delivery writes require a valid driver JWT, an assigned-driver identity match, and an allow-listed status transition.
 
-\textbf{Residual risk.} The fix does not prove the integrity or accuracy of the driver device and GPS source.
+\control Anonymous, customer, and unrelated-driver writes fail. The assigned driver can make the demonstrated valid status and location updates. A reverse transition returns 409. See \evidence{evidence/V4-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
 
-\finding{V5: Broken administrative authorization}
-\textbf{Baseline attack.} An unauthenticated request changed Driver B's availability through Driver B's ID.
+\residual The service does not prove the integrity of a driver device or GPS source.
 
-\textbf{Impact.} An attacker can disrupt delivery allocation.
+\finding{V5: Broken driver administration authorization}
+\baseline An unauthenticated request changed Driver B's availability by using Driver B's URL identifier. See \evidence{evidence/V5-before.txt}.
 
-\textbf{Fix and result.} Driver availability updates require a verified driver JWT. The verified driver ID must match the URL ID. A driver cannot update another driver's availability. A driver can update own availability.
+\impact An attacker could disrupt delivery allocation and service availability.
 
-\textbf{Residual risk.} This finding covers driver availability. Restaurant administration remains outside this counted fix.
+\fix Driver availability updates now require a valid driver JWT. The verified driver ID must match the URL driver ID.
+
+\control One driver cannot update another driver's availability. A driver can update own availability. See \evidence{evidence/V5-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
+
+\residual This finding covers driver availability only. Restaurant administration requires separate review before it can be claimed as protected.
 
 \finding{V6: Payment amount and state manipulation}
-\textbf{Baseline attack.} A client created a card order with amount 1 instead of the fixture total 2500. The order was also marked paid.
+\baseline A client created a card order with \evidence{totalAmount=1} instead of the synthetic trusted total of 2500. The baseline also marked the order paid. See \evidence{evidence/V6-before.txt}.
 
-\textbf{Impact.} A customer can lower the charge or obtain a paid order without confirmed payment.
+\impact A customer could reduce the payable amount or obtain a paid order without confirmed payment.
 
-\textbf{Fix and result.} The order service calculates the USD price from trusted product data. It ignores client currency and paid-status fields. New card orders start pending. A tampered request persists 2500 USD and pending status.
+\fix The order service calculates the USD total from trusted product data. It ignores client currency and paid-status fields. New card orders start in the pending state.
 
-\textbf{Residual risk.} Payment confirmation must remain bound to a trusted order and verified provider event.
+\control Tampered amount, currency, and payment-state values do not control the persisted order. The test persists 2500 USD and pending state. An authenticated customer can create a server-priced order. See \evidence{evidence/V6-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
 
-\finding{V7: Sensitive token exposure and session design}
-\textbf{Baseline attack.} Login and refresh responses returned bearer tokens in JSON. The service logged refresh-token data. The frontend stored access tokens.
+\residual A future confirmation path must bind a trusted order to a verified payment-provider event.
 
-\textbf{Impact.} Script injection, browser access, or log access can expose bearer tokens and allow session impersonation.
+\finding{V7: Sensitive token disclosure and session design}
+\baseline Login and refresh responses returned bearer tokens in JSON. User-service logs recorded refresh-token data, and the browser stored access tokens. See \evidence{evidence/V7-before.txt}.
 
-\textbf{Fix and result.} Login and refresh issue strict HttpOnly cookies. The frontend does not store bearer tokens. Logging omits request query values, which also prevents OIDC authorization-code logging. Login and refresh JSON omit access tokens. Cookie mutations require the approved Origin.
+\impact Script injection, browser access, log access, or log forwarding could disclose bearer tokens and enable session impersonation.
 
-\textbf{Residual risk.} XSS can still make same-origin requests while a user session exists. Future work includes Content Security Policy and broader XSS review.
+\fix Login and refresh now issue credentialed strict HttpOnly cookies. The frontend no longer stores bearer tokens. Request logging records the request path but omits query values, which also prevents OIDC authorization-code logging. Cookie mutations require the approved Origin.
 
-\section{WSO2 OpenID Connect customer login}
-The added feature supports one customer login with WSO2 Identity Server 7.1.0. CraveDrop generates state, nonce, and a PKCE verifier. It uses an S256 challenge and stores the temporary flow in a signed short-lived HttpOnly cookie. The callback exchanges the authorization code server-side and validates issuer, audience, RS256 signature, expiry, nonce, and subject.
+\control Login and refresh JSON omit access tokens. Browser storage and application logs do not contain bearer tokens. A missing or wrong Origin blocks cookie mutation. An approved-origin session can access profile and refresh operations. See \evidence{evidence/V7-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
 
-The local account key is provider issuer plus subject. The service does not link a local account by matching email address. If the local provider does not release a verified email claim, the service stores a deterministic non-deliverable identity placeholder. The real synthetic-user control returned a safe dashboard redirect, issued strict HttpOnly CraveDrop cookies, cleared the flow cookie, and authorized a protected endpoint. Node 20 mocked controls reject tampered state before code exchange and reject invalid nonce or ID-token input.
+\residual HttpOnly cookies reduce token theft but do not prevent a successful XSS attack from making same-origin requests while a session exists.
 
-\section{Supporting tools and secure development}
-The team ran \texttt{npm audit} for user, order, payment, delivery, and driver services. The results are recorded in \texttt{evidence/tools/npm-audit.txt}. These dependency advisories are not counted vulnerabilities because the team did not reproduce an endpoint impact.
+\section{Verification and reproducibility}\label{sec:verification}
+\subsection{Fixtures and baseline integrity}
+The deterministic fixture definition is \evidence{security-tests/fixtures/security-fixtures.json}. The reset command writes ignored active fixture data with local-only permissions. The team verified the fixture contents before runtime checks. Baseline attacks ran in a separate worktree checked out at the immutable tag.
 
-The OWASP ZAP local-gateway scan is deferred because its Docker image download and scan exceed the available bandwidth. No ZAP warning or scan result is claimed. The team must run a bounded scan before submission if bandwidth is available.
+\subsection{Test evidence}
+\begin{longtable}{P{0.08\linewidth}P{0.26\linewidth}P{0.28\linewidth}P{0.29\linewidth}}
+\toprule
+\textbf{Area} & \textbf{Before evidence} & \textbf{After evidence} & \textbf{Focused checks} \\
+\midrule
+\endhead
+V1--V3 & \evidence{evidence/V1-before.txt} through \evidence{V3-before.txt} & \evidence{evidence/V1-after.txt} through \evidence{V3-after.txt} & \evidence{security-tests/runtime-v1-v3.mjs} \\
+V4--V7 & \evidence{evidence/V4-before.txt} through \evidence{V7-before.txt} & \evidence{evidence/V4-after.txt} through \evidence{V7-after.txt} & \evidence{runtime-v4-v7.mjs} and \evidence{regression-v4-v7.mjs} \\
+OIDC & Not a baseline vulnerability & \evidence{evidence/oidc-after.txt} & \evidence{regression-oidc.mjs} and \evidence{oidc-mocked.mjs} under Node 20 \\
+\bottomrule
+\end{longtable}
 
-Preventive practices include dependency review, server-owned sensitive state, explicit field allow-lists, endpoint-level authorization, redacted evidence, synthetic data, focused negative and positive tests, and protected browser sessions.
+The source-contract checks verify that the security controls remain in the changed routes and services. The runtime checks verify the HTTP behavior. The evidence files are redacted. They do not contain credentials, complete tokens, or cookies.
 
-\section{Evidence and contributions}
-The source record for each finding is \texttt{docs/report-notes.md}. The evidence matrix links the baseline request, after-fix proof, test, and commit. The main fix commits are \texttt{4904430}, \texttt{2f58bbf}, and \texttt{8505d31}. The OIDC feature commit is \texttt{4a440d1}.
+\subsection{Supporting tools}
+The team ran \evidence{npm audit} against user, order, payment, delivery, and driver services. The commands, tool versions, and severity counts are recorded in \evidence{evidence/tools/npm-audit.txt}. These advisories are dependency-maintenance input, not counted application vulnerabilities, because no endpoint impact was reproduced.
 
-Hansaja implemented the user-session hardening and WSO2 login. Dharmasiri implemented order authentication, BOLA, and mass-assignment controls. Sanjeewa implemented delivery, driver, and payment-integrity controls. Aluthwaththa prepared fixtures, tool evidence, report material, and packaging documentation. The final video and Git history must show the actual contributions.
+The OWASP ZAP local-gateway scan is deferred. The Docker image download and scan exceeded the available bandwidth. The repository records this honestly in \evidence{evidence/tools/zap-deferred.txt}; no ZAP result is claimed. A bounded local-gateway scan remains a pre-submission action when bandwidth is available.
+
+\section{WSO2 OpenID Connect customer login}\label{sec:oidc}
+\subsection{Feature objective}
+The added feature provides one customer sign-in path through WSO2 Identity Server 7.1.0. It does not add account linking, role synchronization, or automated logout. The intent is to demonstrate a secure OpenID Connect grant implementation without exposing provider tokens to the browser.
+
+\subsection{Security design}
+The user service creates cryptographically random state, nonce, and PKCE verifier values. It sends the S256 challenge to WSO2 and stores the temporary flow in a signed, short-lived, HttpOnly cookie. The callback compares state before token exchange, exchanges the authorization code server-side, and validates the provider issuer, client audience, RS256 signature, expiry, nonce, and subject.
+
+The local CraveDrop account key is the provider issuer plus subject. The service explicitly rejects automatic local-account linking by matching an email address. The local WSO2 test user store released only a subject claim. In that controlled case, the service keeps the issuer-plus-subject binding and stores a deterministic non-deliverable \evidence{@identity.invalid} placeholder rather than assuming an email address.
+
+\subsection{Feature verification}
+A synthetic WSO2 customer completed a real local flow. The callback returned HTTP 302 to an allow-listed dashboard path, issued strict HttpOnly CraveDrop session cookies, expired the temporary flow cookie, and authorized a protected validation endpoint. No provider token appeared in the callback URL.
+
+The mocked Node 20 suite confirms that a tampered state is rejected before token exchange and that an invalid nonce or identity token is rejected. The proof is \evidence{evidence/oidc-after.txt}; the tests are \evidence{security-tests/regression-oidc.mjs} and \evidence{security-tests/oidc-mocked.mjs}; the implementation commit is \evidence{4a440d1}.
+
+\section{Remaining vulnerabilities and limitations}\label{sec:remaining}
+The following risks were identified but are not claimed as fixed or counted as additional vulnerabilities.
+
+\begin{longtable}{P{0.27\linewidth}P{0.30\linewidth}P{0.35\linewidth}}
+\toprule
+\textbf{Risk or limitation} & \textbf{Reason not fixed in this scope} & \textbf{Recommended follow-up} \\
+\midrule
+\endhead
+Restaurant administration controls & The seven-findings scope uses driver availability for V5. Restaurant routes need an independent assessment and test set. & Review each restaurant mutation for verified role and ownership checks. \\
+Notification BOLA variants & These share an authorization root cause with other object-access findings. Counting them would inflate the seven-finding portfolio. & Assess them separately and add principal-scoped notification access. \\
+XSS impact on cookie sessions & HttpOnly prevents token reads but not same-origin actions initiated by injected script. & Add a Content Security Policy, output encoding review, and XSS tests. \\
+Payment confirmation integration & The local control demonstrates trusted order state, not a real payment-provider confirmation. & Verify signed provider webhooks and bind each event to the trusted order and amount. \\
+Driver device and GPS integrity & API authorization cannot verify the physical source of a reported location. & Apply mobile/device controls and anomaly detection where appropriate. \\
+ZAP scan & The planned scan is deferred because of bandwidth limits. & Run and triage a bounded local-gateway ZAP scan before submission. \\
+\bottomrule
+\end{longtable}
+
+\section{Preventive secure software engineering practices}\label{sec:prevention}
+The observed vulnerabilities are preventable through routine engineering controls.
+\begin{itemize}
+  \item \textbf{Threat modelling at route design.} Define the actor, resource owner, permitted action, and server-owned state before implementing a route.
+  \item \textbf{Authorization as a service-boundary contract.} Verify identity from a signed token or session. Do not derive identity or privilege from body, query, or URL data alone.
+  \item \textbf{Allow-list mutation inputs.} Accept only fields required by the user action. Compute prices, account IDs, payment state, and audit timestamps on the server.
+  \item \textbf{Security regression tests.} Keep an attack test and an authorized control for every authorization and state-change rule.
+  \item \textbf{Secure session engineering.} Keep bearer credentials out of JSON, browser storage, URLs, and logs. Use strict HttpOnly cookies with origin checks for cookie-mutating requests.
+  \item \textbf{Dependency and configuration review.} Review audit output, container configuration, default credentials, logging, and environment handling. Do not treat an advisory as an exploit without impact evidence.
+  \item \textbf{Evidence hygiene.} Use synthetic fixtures, redact captures, and ensure secret-bearing files are ignored before commits, reports, and videos.
+\end{itemize}
+
+\section{Individual contributions}\label{sec:contributions}
+The repository records work in coherent commits. The final video must show each member explaining the allocated work. The team will not manufacture commits solely to increase contribution counts.
+
+\begin{longtable}{P{0.25\linewidth}P{0.17\linewidth}P{0.49\linewidth}}
+\toprule
+\textbf{Member} & \textbf{Registration number} & \textbf{Allocated work and evidence} \\
+\midrule
+\endhead
+Hansaja A. M. G & IT22171856 & User-session and token hardening, WSO2 OIDC login, \evidence{4a440d1}, \evidence{evidence/oidc-after.txt}, and OIDC video segment. \\
+Dharmasiri I. D. N. D & IT22254320 & Order authentication, BOLA, mass-assignment controls, \evidence{4904430}, \evidence{2e7d8bf}, and V1--V3 video segments. \\
+Sanjeewa P. D. L. B & IT22629708 & Delivery and driver authorization, payment integrity, \evidence{2f58bbf}, \evidence{8505d31}, and V4--V6 video segments. \\
+Aluthwaththa A. W. D. S. M & IT22267290 & Synthetic fixtures, \evidence{89421a7}, tool evidence, report material, README, submission packaging, and video segments. \\
+\bottomrule
+\end{longtable}
 
 \section{Conclusion}
-The assessment preserves a reproducible vulnerable baseline and demonstrates seven distinct fixed vulnerabilities. The application now enforces authentication, ownership, server-owned payment state, delivery authorization, and cookie-session handling at the affected boundaries. A secure WSO2 customer-login path is available for local demonstration. Remaining risks and the deferred ZAP scan are stated without unsupported claims.
+CraveDrop now has seven independently evidenced security fixes and a secure WSO2 OIDC customer-login feature. The work preserves a reproducible vulnerable baseline and verifies both blocked attacks and legitimate authorized flows. The report states remaining risks and the deferred ZAP scan without unsupported claims. The final submission must add the unlisted video URL to \evidence{README.txt}, run the remaining bounded scan if possible, and complete the clean-clone and ZIP checks.
+
+\begin{thebibliography}{9}
+\bibitem{assignment} SE4030, \textit{Secure Software Development Assignment}, 2026. Provided assignment brief.
+\bibitem{owasp-api} OWASP Foundation, \textit{OWASP API Security Top 10}. \url{https://owasp.org/www-project-api-security/}
+\bibitem{owasp-top10} OWASP Foundation, \textit{OWASP Top 10 Web Application Security Risks}. \url{https://owasp.org/www-project-top-ten/}
+\bibitem{cwe} MITRE, \textit{Common Weakness Enumeration}. \url{https://cwe.mitre.org/}
+\bibitem{oidc} OpenID Foundation, \textit{OpenID Connect Core 1.0}. \url{https://openid.net/specs/openid-connect-core-1_0.html}
+\bibitem{rfc7636} IETF, \textit{RFC 7636: Proof Key for Code Exchange by OAuth Public Clients}. \url{https://www.rfc-editor.org/rfc/rfc7636}
+\bibitem{wso2} WSO2, \textit{WSO2 Identity Server Documentation}. \url{https://is.docs.wso2.com/}
+\end{thebibliography}
 
 \end{document}

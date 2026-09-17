@@ -427,7 +427,25 @@ export const updateDeliveryStatus = async (req, res) => {
       });
     }
 
-    // Update delivery status
+    if (String(delivery.driverid) !== String(req.actorId)) {
+      return res.status(403).json({
+        message: 'Only the assigned driver may update this delivery'
+      });
+    }
+
+    const allowedTransitions = {
+      ASSIGNED: ['PICKED_UP', 'CANCELLED', 'FAILED'],
+      PICKED_UP: ['IN_TRANSIT', 'CANCELLED', 'FAILED'],
+      IN_TRANSIT: ['DELIVERED', 'CANCELLED', 'FAILED'],
+      DELIVERED: [],
+      FAILED: [],
+      CANCELLED: []
+    };
+
+    if (!allowedTransitions[delivery.status]?.includes(status)) {
+      return res.status(409).json({ message: 'Invalid delivery status transition' });
+    }
+
     delivery.status = status;
     await delivery.save();
 
@@ -489,6 +507,12 @@ export const updateDriverLocation = async (req, res) => {
     if (!delivery) {
       return res.status(404).json({
         message: 'Delivery not found'
+      });
+    }
+
+    if (String(delivery.driverid) !== String(req.actorId)) {
+      return res.status(403).json({
+        message: 'Only the assigned driver may update this delivery'
       });
     }
 

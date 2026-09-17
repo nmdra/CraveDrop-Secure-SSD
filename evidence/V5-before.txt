@@ -15,10 +15,8 @@ curl -i -X PUT http://localhost:3009/driver/0000000000000000000000b1/availabilit
 
 - PASS: driver-service/src/routes/driverRoutes.js:25 contains `router.put('/:id/availability', updateDriverAvailabilityById);`
 - PASS: driver-service/src/routes/driverRoutes.js:19 contains `router.get('/all',  getAllDrivers);`
-- PASS: restaurant-service/src/routes/restaurantRoutes.js:13 contains `router.put("/menu/:restaurantId/:itemId", updateMenuItem);`
-- PASS: restaurant-service/src/routes/adminRoutes.js:10 contains `router.put("/verify/:restaurantId", verifyRestaurant);`
 
-Impact: Identifier-based driver and restaurant administrative operations are publicly routed without an owner, staff, or admin capability check.
+Impact: The identifier-based driver availability operation is publicly routed without an owner, staff, or driver-ownership capability check.
 
 This Phase 3 artifact is a reproducible source-level baseline proof.
 

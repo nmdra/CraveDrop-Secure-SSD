@@ -7,8 +7,16 @@ const refreshSecret = process.env.JWT_REFRESH_SECRET;
 // const refreshTokenStore = new Map();
 
 export const generateTokens = (userId) => {
-    const accessToken = jwt.sign({ userId }, secretKey, { expiresIn: '3h' });
-    const refreshToken = jwt.sign({ userId }, refreshSecret, { expiresIn: '1d' });
+    const accessToken = jwt.sign(
+        { userId },
+        secretKey,
+        { algorithm: 'HS256', expiresIn: '3h' }
+    );
+    const refreshToken = jwt.sign(
+        { userId },
+        refreshSecret,
+        { algorithm: 'HS256', expiresIn: '1d' }
+    );
 
     // refreshTokenStore.set(userId, refreshToken);
 
@@ -17,11 +25,10 @@ export const generateTokens = (userId) => {
 
 export const verifyRefreshToken = (refreshToken) => {
     try {
-        console.log(refreshSecret)
-        console.log(refreshToken)
-        const decoded = jwt.verify(refreshToken, refreshSecret);
+        const decoded = jwt.verify(refreshToken, refreshSecret, {
+            algorithms: ['HS256']
+        });
         // const storedToken = refreshTokenStore.get(decoded.user.userId);
-        console.log(decoded)
         // if (storedToken !== refreshToken) return null;
         return decoded.userId;
     } catch {

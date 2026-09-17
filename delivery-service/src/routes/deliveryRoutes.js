@@ -11,6 +11,7 @@ import {
   updateDeliveryStatus,
   updateDriverLocation
 } from '../controllers/deliveryController.js';
+import { authenticateDeliveryActor } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -28,9 +29,9 @@ router.get('/:id', getDeliveryDetails);
 router.post('/assign-ready-orders', manuallyAssignDrivers);
 
 // Status dupdate route
-router.patch('/:id/status', updateDeliveryStatus);
+router.patch('/:id/status', authenticateDeliveryActor, updateDeliveryStatus);
 
 // New driver location update route
-router.patch('/:id/driver-location', updateDriverLocation);
+router.patch('/:id/driver-location', authenticateDeliveryActor, updateDriverLocation);
 
 export default router;

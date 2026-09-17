@@ -1,0 +1,30 @@
+# V4: Delivery mutation protection after fix
+
+Test source: `security-tests/runtime-v4-v7.mjs`
+
+## Blocked attacks
+
+```text
+Anonymous PATCH /delivery/0000000000000000000000f1/status
+HTTP/1.1 401 Unauthorized
+
+Customer A token PATCH to the driver delivery
+HTTP/1.1 403 Forbidden
+
+Driver B token PATCH to Driver A's delivery
+HTTP/1.1 403 Forbidden
+```
+
+The route now authenticates the actor and the controller requires the assigned driver.
+
+## Authorised controls
+
+```text
+Driver A token PATCH status ASSIGNED -> PICKED_UP
+HTTP/1.1 200 OK
+
+Driver A token PATCH driver location
+HTTP/1.1 200 OK
+```
+
+The assigned-driver delivery workflow remains available. All records are synthetic.

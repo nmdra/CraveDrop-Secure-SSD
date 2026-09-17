@@ -6,7 +6,7 @@ dotenv.config();
 
 export const createOrder = async (req, res) => {
   try {
-    const { items, paymentMethod, totalAmount, currency, deliveryAddress, phoneNumber } = req.body;
+    const { items, paymentMethod, deliveryAddress, phoneNumber } = req.body;
     const userId = req.userId;
 
     if (!userId || !Array.isArray(items) || items.length === 0 || !paymentMethod || !deliveryAddress) {
@@ -44,20 +44,17 @@ export const createOrder = async (req, res) => {
       // For cash payments, no need to process anything here
     }
 
-    // Create the Order - use the provided totalAmount for card payments (already processed)
-    // or use calculated amount for cash payments
-    const finalAmount = paymentMethod === 'card' ? totalAmount : calculatedTotalAmount;
-
+    // The server owns the amount, currency, and initial payment state.
     const order = new Order({
       userId,
       items: enrichedItems,
-      totalAmount: finalAmount,
-      currency: currency || 'usd', // Use provided currency or default to 'usd'
+      totalAmount: calculatedTotalAmount,
+      currency: 'usd',
       paymentMethod,
       paymentClientSecret,
       deliveryAddress,
       phoneNumber,
-      status: paymentMethod === 'card' ? 'paid' : 'pending', // If card payment, it's already paid
+      status: 'pending',
     });
 
     await order.save();

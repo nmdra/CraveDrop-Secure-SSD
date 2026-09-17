@@ -22,7 +22,7 @@ router.get('/all',  getAllDrivers);  // Added new route for getting all drivers
 router.get('/:id', getDriverById);
 
 // Update driver availability by ID - for use by other services
-router.put('/:id/availability', updateDriverAvailabilityById);
+router.put('/:id/availability', protect, updateDriverAvailabilityById);
 
 // Protected routes
 router.get('/profile', protect, getDriverProfile);

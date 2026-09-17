@@ -1,27 +1,30 @@
 # Security finding matrix
 
-The seven counted findings below use different primary root causes. Delivery/notification object-authorisation issues are not counted separately.
+The seven counted findings use different primary root causes. Delivery/notification object-authorisation issues are not counted separately.
 
-| ID | Primary weakness | CWE / OWASP mapping | Baseline evidence | Fix/test commit | Blocked attack | Legitimate control | Status |
+| ID | Primary weakness | CWE / OWASP mapping | Baseline evidence | Fix/test reference | Blocked attack | Legitimate control | Status |
 |---|---|---|---|---|---|---|---|
-| V1 | Missing authentication on payment actions | CWE-306 / OWASP API1 | `evidence/V1-before.txt`; payment routes mount without auth | Pending | Pending | Pending | Source baseline reproduced |
-| V2 | Order IDOR/BOLA | CWE-639 / OWASP API1 | `evidence/V2-before.txt`; order lookup/delete use URL id only | Pending | Pending | Pending | Source baseline reproduced |
-| V3 | Order mass assignment | CWE-915 / OWASP API3 | `evidence/V3-before.txt`; update passes `req.body` | Pending | Pending | Pending | Source baseline reproduced |
-| V4 | Unauthorised delivery mutation | CWE-862 / OWASP API5 | `evidence/V4-before.txt`; status/location writes lack actor check | Pending | Pending | Pending | Source baseline reproduced |
-| V5 | Broken administrative authorisation | CWE-862 / OWASP API5 | `evidence/V5-before.txt`; driver/restaurant admin routes lack role guard | Pending | Pending | Pending | Source baseline reproduced |
-| V6 | Payment amount manipulation | CWE-841 / OWASP API business-logic risk | `evidence/V6-before.txt`; amount and paid state depend on client input | Pending | Pending | Pending | Source baseline reproduced |
-| V7 | Sensitive session-token exposure | CWE-922 and CWE-532 / OWASP API2 | `evidence/V7-before.txt`; JSON/localStorage/log token exposure | Pending | Pending | Pending | Source baseline reproduced |
+| V1 | Missing authentication on payment actions | CWE-306 / OWASP API1 | `evidence/V1-before.txt` | `evidence/V1-after.txt`; `security-tests/runtime-v1-v3.mjs` | Anonymous payment request returns 401 | Authenticated request reaches the payment handler | Fixed and runtime-tested |
+| V2 | Order IDOR/BOLA | CWE-639 / OWASP API1 | `evidence/V2-before.txt` | `evidence/V2-after.txt`; `security-tests/runtime-v1-v3.mjs` | Customer B receives 404 for Customer A's order | Customer A receives 200 for the owned order | Fixed and runtime-tested |
+| V3 | Order mass assignment | CWE-915 / OWASP API3 | `evidence/V3-before.txt` | `evidence/V3-after.txt`; `security-tests/runtime-v1-v3.mjs` | Protected-field payload returns 400 | Allowed owner update and order creation succeed | Fixed and runtime-tested |
+| V4 | Unauthorised delivery mutation | CWE-862 / OWASP API5 | `evidence/V4-before.txt` | `evidence/V4-after.txt`; `security-tests/runtime-v4-v7.mjs` | Anonymous, customer, and unrelated driver writes fail | Assigned driver can update status/location | Fixed and runtime-tested |
+| V5 | Broken administrative authorisation | CWE-862 / OWASP API5 | `evidence/V5-before.txt` | `evidence/V5-after.txt`; `security-tests/runtime-v4-v7.mjs` | Driver A cannot change Driver B | Driver A can change their own availability | Fixed and runtime-tested |
+| V6 | Card order payment amount manipulation | CWE-841 / OWASP API business-logic risk | `evidence/V6-before.txt` | `evidence/V6-after.txt`; `security-tests/runtime-v4-v7.mjs` | Client amount/currency/status do not control persisted values | Authenticated customer can create a server-priced card order | Fixed and runtime-tested |
+| V7 | Sensitive session-token exposure | CWE-922 and CWE-532 / OWASP API2 | `evidence/V7-before.txt` | `evidence/V7-after.txt`; `security-tests/runtime-v4-v7.mjs` | Login/refresh JSON and logs do not expose tokens | HttpOnly cookie session reaches the protected profile | Fixed and runtime-tested |
 
-## Baseline verification
-
-Run the repeatable source-level baseline check from the repository root:
+## Verification commands
 
 ```bash
 node security-tests/baseline-check.mjs baseline-vulnerable
+node security-tests/regression-v1-v3.mjs baseline-vulnerable
+node security-tests/regression-v1-v3.mjs WORKTREE
+node security-tests/regression-v4-v7.mjs
+JWT_SECRET=local-security-test-secret node security-tests/runtime-v1-v3.mjs
+JWT_SECRET=local-security-test-secret node security-tests/runtime-v4-v7.mjs
 ```
 
-It verifies the vulnerable route/controller operations from the immutable tag and writes the seven redacted baseline evidence files. The curl request in each evidence file is the local HTTP reproduction recipe. Live response captures will be appended when the affected local services are started.
+The runtime commands require the affected local services and synthetic fixtures. Do not print or commit JWTs, cookies, secrets, or unredacted logs.
 
 ## Counting rule
 
-A finding becomes complete only after the report contains its baseline request/response, impact, focused fix, blocked-attack test, legitimate control test, residual risk, and fix commit. Notification BOLA is retained as an optional backup and is not part of the required seven.
+A finding is complete only when the report contains its baseline request/response, impact, focused fix, blocked-attack test, legitimate control test, residual risk, and fix commit. Notification BOLA is retained as an optional backup and is not part of the required seven.

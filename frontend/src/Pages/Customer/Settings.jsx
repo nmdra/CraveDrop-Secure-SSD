@@ -5,11 +5,7 @@ import Loading from '../../Components/User/Loading'
 
 const fetcher = (url) =>
     axios
-        .get(url, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        })
+        .get(url, { withCredentials: true })
         .then((res) => res.data.user)
 
 function Settings() {
@@ -96,11 +92,7 @@ function Settings() {
                     birthday,
                     defaultAddress: { ...address },
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }
+                { withCredentials: true }
             )
 
             setSuccessMsg('User updated successfully.')
@@ -117,12 +109,7 @@ function Settings() {
 
     const handleDeleteAccount = async () => {
         try {
-            await axios.delete('/api/user/', {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            })
-            localStorage.removeItem('token')
+            await axios.delete('/api/user/', { withCredentials: true })
             window.location.href = '/login'
         } catch (err) {
             setErrors({ server: 'Failed to delete account. Try again.' })

@@ -60,7 +60,6 @@ const Header = () => {
                     { withCredentials: true }
                 )
                 localStorage.removeItem('user')
-                localStorage.removeItem('token')
                 setIsLoggedIn(false)
                 setIsDropdownOpen(false)
                 navigate('/login')

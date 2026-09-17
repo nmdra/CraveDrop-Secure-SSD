@@ -14,19 +14,18 @@ export const useLogin = () => {
         setError(null)
 
         try {
-            const response = await axios.post('/api/user/auth', {
-                email,
-                password,
-            })
+            const response = await axios.post(
+                '/api/user/auth',
+                { email, password },
+                { withCredentials: true }
+            )
 
-            const { user, accessToken } = response.data
+            const { user } = response.data
 
-            // Save token and user info separately
-            localStorage.setItem('token', accessToken)
+            // Store only non-sensitive display information.
             localStorage.setItem('user', JSON.stringify(user))
 
-            // Dispatch user info and token to auth context
-            dispatch({ type: 'LOGIN', payload: { user, token: accessToken } })
+            dispatch({ type: 'LOGIN', payload: user })
 
             setIsLoading(false)
             navigate('/dashboard')

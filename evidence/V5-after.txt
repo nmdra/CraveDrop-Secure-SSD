@@ -1,0 +1,22 @@
+# V5: Driver administrative authorisation after fix
+
+Test source: `security-tests/runtime-v4-v7.mjs`
+
+## Blocked attack
+
+```text
+Driver A token PUT /driver/0000000000000000000000b1/availability
+HTTP/1.1 403 Forbidden
+{"message":"A driver may update only their own availability"}
+```
+
+A verified driver cannot change another driver's availability. Anonymous requests are rejected by the existing driver authentication middleware.
+
+## Authorised control
+
+```text
+Driver A token PUT /driver/0000000000000000000000a1/availability
+HTTP/1.1 200 OK
+```
+
+Driver A can still update their own availability. Token prefixes and credentials are not included in the evidence.

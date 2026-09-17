@@ -1,0 +1,32 @@
+# WSO2 OIDC customer-login verification
+
+Date: 2026-09-17
+Target: local WSO2 IS 7.1.0 and local CraveDrop user service
+Account: synthetic WSO2 customer (identifier redacted)
+
+## Real Authorization Code + S256 PKCE control
+
+The synthetic customer completed the WSO2 login and consent flow. Redacted callback results:
+
+```text
+callback_status=302
+access_session_cookie=issued (HttpOnly; SameSite=Strict)
+refresh_session_cookie=issued (HttpOnly; SameSite=Strict)
+flow_cookie_expired=true
+safe_dashboard_redirect=yes
+token_in_callback_url=no
+protected_session_status=200
+```
+
+The callback URL contained only the short-lived authorization code and state. It did not contain access, ID, or refresh tokens. No token, cookie value, client secret, authorization code, or customer identifier is recorded here.
+
+## Negative controls
+
+Run in the supported Node 20 container:
+
+```text
+PASS tampered OIDC state is rejected before code exchange
+PASS invalid OIDC nonce/ID-token validation is rejected
+```
+
+The source regression also verifies S256 PKCE, signed flow-cookie validation, RS256 issuer/audience checks, fixed callback URI, safe redirect handling, and no frontend token persistence.

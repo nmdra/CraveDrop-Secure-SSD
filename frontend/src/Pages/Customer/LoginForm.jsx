@@ -104,6 +104,12 @@ const Login = () => {
                     </button>
                     <ToastContainer />
                 </form>
+                <a
+                    href="/api/user/auth/wso2/start"
+                    className="mt-4 block w-full rounded-lg border border-green-600 px-4 py-2 text-center text-green-700 hover:bg-green-50"
+                >
+                    Continue with WSO2
+                </a>
                 <div className="mt-4">
                     <Link
                         to="/forgot-password"

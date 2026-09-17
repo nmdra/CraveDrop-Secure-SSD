@@ -9,6 +9,20 @@ services:
     networks:
       - cravedrop-network
   
+  # Start only for the local OIDC demonstration:
+  # docker compose --profile oidc up wso2is
+  wso2is:
+    image: wso2/wso2is:7.1.0
+    profiles: ["oidc"]
+    container_name: wso2is
+    hostname: wso2is
+    ports:
+      - "9443:9443"
+    volumes:
+      - wso2is_data:/home/wso2carbon/wso2is-7.1.0/repository
+    networks:
+      - cravedrop-network
+
   user-service:
     image: nmdra/user-service
     build:
@@ -249,6 +263,7 @@ services:
 
 volumes:
   pg_data:
+  wso2is_data:
 
 networks:
   cravedrop-network:

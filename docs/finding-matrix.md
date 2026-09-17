@@ -25,6 +25,10 @@ JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v4-v7.mjs
 
 The runtime commands require the affected local services and synthetic fixtures. Do not print or commit JWTs, cookies, secrets, or unredacted logs.
 
+## WSO2 OIDC feature evidence
+
+The non-counted customer-login feature is recorded in `evidence/oidc-after.txt`. `security-tests/regression-oidc.mjs` checks source security contracts. `security-tests/oidc-mocked.mjs`, run in Node 20, proves S256 PKCE start parameters and rejects tampered state and nonce/ID-token validation failures. The real local WSO2 7.1.0 control completed with strict HttpOnly CraveDrop cookies and a protected-session response.
+
 ## Counting rule
 
 A finding is complete only when the report contains its baseline request/response, impact, focused fix, blocked-attack test, legitimate control test, residual risk, and fix commit. Notification BOLA is retained as an optional backup and is not part of the required seven.

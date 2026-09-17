@@ -4,7 +4,7 @@ import userRepo from '../repositories/userRepository.js';
 import { generateTokens, verifyRefreshToken } from '../utils/generateToken.js';
 import bcrypt from 'bcrypt';
 
-const cookieOptions = (maxAge) => ({
+export const cookieOptions = (maxAge) => ({
     httpOnly: true,
     sameSite: 'strict',
     secure: process.env.NODE_ENV !== 'development',

@@ -1,0 +1,26 @@
+# V6: Card order amount integrity after fix
+
+Test source: `security-tests/runtime-v4-v7.mjs`
+
+## Blocked manipulation
+
+```text
+POST /api/orders with quantity 2, client totalAmount 1, and currency eur
+HTTP/1.1 201 Created
+```
+
+The request is accepted as an order creation, but the server-owned values in the response are:
+
+```json
+{
+  "totalAmount": 2500,
+  "currency": "usd",
+  "status": "pending"
+}
+```
+
+The client amount, currency, and paid status no longer control the order. A card order remains pending until a verified payment flow is added.
+
+## Authorised control
+
+The same authenticated customer can create a valid card order. The trusted total is calculated from the stored product price of 1250 and quantity 2.

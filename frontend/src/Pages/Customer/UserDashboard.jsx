@@ -23,11 +23,7 @@ mock.onAny().passThrough()
 // Fetcher
 const fetcher = (url) =>
     axios
-        .get(url, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        })
+        .get(url, { withCredentials: true })
         .then((res) => res.data.user)
 
 function Dashboard() {
@@ -45,7 +41,9 @@ function Dashboard() {
         data: orders,
         isLoading: ordersLoading,
         error: ordersError,
-    } = useSWR('/api/orders', (url) => axios.get(url).then((res) => res.data))
+    } = useSWR('/api/orders', (url) =>
+        axios.get(url, { withCredentials: true }).then((res) => res.data)
+    )
 
     if (error) {
         return (

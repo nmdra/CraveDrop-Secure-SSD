@@ -1,0 +1,15 @@
+# V7: Session-token exposure protection after fix
+
+Test source: `security-tests/runtime-v4-v7.mjs`
+
+## Blocked exposure
+
+```text
+POST /api/user/auth with the synthetic customer credentials
+HTTP/1.1 200 OK
+{"status":"success","user":{"userId":"<synthetic-id>","firstname":"Customer"}}
+```
+
+The JSON response contains no `accessToken`. The response sets `accessToken` and `refreshToken` as HttpOnly, SameSite cookies. A protected profile request using those cookies returns HTTP 200. Refresh also returns HTTP 200 without placing an access token in JSON.
+
+The customer frontend no longer persists a bearer token in localStorage or adds an Authorization interceptor. The user-service refresh path no longer logs token material. Sensitive values are not included in this evidence.

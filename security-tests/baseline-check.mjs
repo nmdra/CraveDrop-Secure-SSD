@@ -72,10 +72,8 @@ const checks = [
     evidence: [
       ['driver-service/src/routes/driverRoutes.js', "router.put('/:id/availability', updateDriverAvailabilityById);"],
       ['driver-service/src/routes/driverRoutes.js', "router.get('/all',  getAllDrivers);"],
-      ['restaurant-service/src/routes/restaurantRoutes.js', 'router.put("/menu/:restaurantId/:itemId", updateMenuItem);'],
-      ['restaurant-service/src/routes/adminRoutes.js', 'router.put("/verify/:restaurantId", verifyRestaurant);'],
     ],
-    impact: 'Identifier-based driver and restaurant administrative operations are publicly routed without an owner, staff, or admin capability check.',
+    impact: 'The identifier-based driver availability operation is publicly routed without an owner, staff, or driver-ownership capability check.'
   },
   {
     id: 'V6',
@@ -83,12 +81,10 @@ const checks = [
     cwe: 'CWE-841: Improper Enforcement of Behavioral Workflow',
     request: `curl -i -X POST http://localhost:5000/api/orders \\\n  -H 'Content-Type: application/json' \\\n  --data '{"userId":"CUSTOMER_A","paymentMethod":"card","totalAmount":1,"items":[...]} '`,
     evidence: [
-      ['payment-service/src/controller/payment.controllers.js', 'const { amount, currency } = req.body;'],
-      ['payment-service/src/controller/payment.controllers.js', 'amount,'],
       ['order-service/src/controller/order.controller.js', "const finalAmount = paymentMethod === 'card' ? totalAmount : calculatedTotalAmount;"],
       ['order-service/src/controller/order.controller.js', "status: paymentMethod === 'card' ? 'paid' : 'pending',"],
     ],
-    impact: 'The client-selected amount is sent to Stripe and card orders are marked paid without server-side confirmation that the amount matches trusted product prices.',
+    impact: 'The card-order path uses a client-selected amount and marks the order paid without server-side confirmation that the amount matches trusted product prices.'
   },
   {
     id: 'V7',

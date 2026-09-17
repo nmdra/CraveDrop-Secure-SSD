@@ -101,8 +101,6 @@ export const loginDriver = async (req, res, next) => {
         if (driver && (await driver.matchPassword(password))) {
             // Generate JWT token
             const token = generateToken(driver._id);
-            console.log(`Login successful for driver: ${driver._id}, token: ${token.substring(0, 15)}...`);
-
             return res.status(StatusCodes.OK).json({
                 id: driver._id,
                 firstName: driver.firstName,
@@ -314,6 +312,12 @@ export const updateDriverAvailabilityById = async (req, res, next) => {
         if (isAvailable === undefined) {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 message: 'Availability status is required'
+            });
+        }
+
+        if (String(req.driver?._id) !== String(driverId)) {
+            return res.status(StatusCodes.FORBIDDEN).json({
+                message: 'A driver may update only their own availability'
             });
         }
 

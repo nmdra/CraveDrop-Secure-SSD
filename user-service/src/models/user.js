@@ -18,7 +18,9 @@ const User = sequelize.define('User', {
     },
     password: { type: DataTypes.STRING, allowNull: false },
     birthday: { type: DataTypes.DATEONLY, allowNull: true },
-    pic: { type: DataTypes.STRING, allowNull: true }
+    pic: { type: DataTypes.STRING, allowNull: true },
+    oidcIssuer: { type: DataTypes.STRING, allowNull: true },
+    oidcSubject: { type: DataTypes.STRING, allowNull: true }
 }, {
     tableName: 'users',
     timestamps: true

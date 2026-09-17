@@ -5,6 +5,10 @@ class UserRepository {
         return await User.findOne({ where: { email } });
     }
 
+    async findByOidc(oidcIssuer, oidcSubject) {
+        return await User.findOne({ where: { oidcIssuer, oidcSubject } });
+    }
+
     async findById(userId) {
         return await User.findByPk(userId, {
             include: [
@@ -17,11 +21,19 @@ class UserRepository {
     async createUser(data) {
         const {
             firstname, lastname, email, password,
-            contactNumber, address, pic
+            contactNumber, address, pic, oidcIssuer, oidcSubject
         } = data;
 
         // Create the user
-        const user = await User.create({ firstname, lastname, email, password, pic });
+        const user = await User.create({
+            firstname,
+            lastname,
+            email,
+            password,
+            pic,
+            oidcIssuer,
+            oidcSubject
+        });
 
         // Create the address
         if (address) {

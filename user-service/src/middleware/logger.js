@@ -22,8 +22,8 @@ const httpLogger = pinoHttp({
         req(req) {
             return {
                 method: req.method,
-                url: req.url,
-                query: req.query,
+                // Query values can contain OIDC authorization codes or other secrets.
+                url: req.path,
                 params: req.params,
             };
         },

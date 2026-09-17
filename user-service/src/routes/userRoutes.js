@@ -4,6 +4,7 @@ import { auth, logout, refreshToken, validate } from '../controllers/authControl
 import { registerUserValidator, updateUserValidator } from '../validators/userValidators.js';
 import { authenticateUser } from '../middleware/authMiddleware.js';
 import { requireSameOrigin } from '../middleware/originMiddleware.js';
+import { startWso2Login, completeWso2Login } from '../controllers/wso2Controller.js';
 
 const router = Router();
 
@@ -18,6 +19,8 @@ router.route('/register').post(registerUserValidator, registerUser)
 
 // Auth routes
 router.route('/auth').post(auth)
+router.route('/auth/wso2/start').get(startWso2Login)
+router.route('/auth/wso2/callback').get(completeWso2Login)
 router.route('/refresh').post(requireSameOrigin, refreshToken);
 router.route('/validate').get(validate)
 router.route('/logout').post(requireSameOrigin, logout)

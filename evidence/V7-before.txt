@@ -1,12 +1,12 @@
 # V7: Sensitive session-token exposure
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-922: Insecure Storage of Sensitive Information
 
 ## Reproduction request
 
 ```bash
-curl -i -X POST http://localhost:5000/api/user/auth \
+curl -i -X POST http://localhost:3001/api/user/auth \
   -H 'Content-Type: application/json' \
   --data '{"email":"customer-a@security.test","password":"CustomerA-Local-Only-123!"}'
 ```
@@ -20,4 +20,16 @@ curl -i -X POST http://localhost:5000/api/user/auth \
 
 Impact: The access token is returned to browser JavaScript, persisted in localStorage, and logged by the frontend; refresh-token material is also logged by the user service.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run against the isolated baseline checkout with the synthetic customer fixture. The bearer values are redacted:
+
+```text
+HTTP/1.1 200 OK
+Set-Cookie: refreshToken=<REDACTED>; Max-Age=86400; Path=/; HttpOnly; SameSite=Strict
+{"status":"success","user":{"userId":"cb96907a-cdc1-40e6-bf9f-eb48f6daba42","firstname":"Customer"},"accessToken":"<REDACTED>"}
+```
+
+The login response exposed `accessToken` to browser JavaScript. A subsequent refresh request returned another access token and caused two JWT/refresh-token log lines in the baseline user-service log. The exact values are intentionally not recorded.

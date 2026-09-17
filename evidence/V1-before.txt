@@ -1,12 +1,12 @@
 # V1: Missing authentication on payment actions
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-306: Missing Authentication for Critical Function
 
 ## Reproduction request
 
 ```bash
-curl -i -X POST http://localhost:5000/api/payments/create-payment-intent \
+curl -i -X POST http://localhost:5002/api/payments/create-payment-intent \
   -H 'Content-Type: application/json' \
   --data '{"amount":1,"currency":"usd"}'
 ```
@@ -19,4 +19,16 @@ curl -i -X POST http://localhost:5000/api/payments/create-payment-intent \
 
 Impact: The payment actions are mounted without an authentication middleware, so an anonymous caller reaches payment functionality.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run against the isolated baseline checkout with a synthetic Stripe test key and no `Authorization` header:
+
+```text
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json; charset=utf-8
+{"error":"Invalid API Key provided: sk_test_**************_key"}
+```
+
+The handler was reached without authentication. The synthetic Stripe key intentionally prevents a real payment request. The response contains no real credential.

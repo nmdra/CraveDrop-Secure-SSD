@@ -1,6 +1,6 @@
 # V5: Broken administrative authorisation
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-862: Missing Authorization for Administrative Function
 
 ## Reproduction request
@@ -20,4 +20,16 @@ curl -i -X PUT http://localhost:3009/driver/0000000000000000000000b1/availabilit
 
 Impact: Identifier-based driver and restaurant administrative operations are publicly routed without an owner, staff, or admin capability check.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run from the isolated baseline checkout without credentials:
+
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"message":"Availability status updated successfully","isAvailable":false}
+```
+
+An unauthenticated caller changed Driver B's synthetic availability. The same route is intended for service use but has no service or role authentication in the baseline.

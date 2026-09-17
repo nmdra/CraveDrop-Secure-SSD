@@ -7,14 +7,15 @@ import {
   getAllOrders,
   getOrdersByRestaurant
 } from '../controller/order.controller.js';
+import { authenticateOrderUser } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', createOrder);
-router.get('/:id', getOrderById);
-router.put('/:id', updateOrder);
-router.delete('/:id', deleteOrder);
-router.get('/', getAllOrders); // Fetch all orders
-router.get('/restaurant/:restaurantId', getOrdersByRestaurant); // New endpoint for restaurant orders
+router.post('/', authenticateOrderUser, createOrder);
+router.get('/:id', authenticateOrderUser, getOrderById);
+router.put('/:id', authenticateOrderUser, updateOrder);
+router.delete('/:id', authenticateOrderUser, deleteOrder);
+router.get('/', authenticateOrderUser, getAllOrders); // Fetch all orders
+router.get('/restaurant/:restaurantId', authenticateOrderUser, getOrdersByRestaurant); // New endpoint for restaurant orders
 
 export default router;

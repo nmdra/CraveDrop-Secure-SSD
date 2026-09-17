@@ -6,7 +6,8 @@ dotenv.config();
 
 export const createOrder = async (req, res) => {
   try {
-    const { userId, items, paymentMethod, totalAmount, currency, deliveryAddress, phoneNumber } = req.body;
+    const { items, paymentMethod, totalAmount, currency, deliveryAddress, phoneNumber } = req.body;
+    const userId = req.userId;
 
     if (!userId || !Array.isArray(items) || items.length === 0 || !paymentMethod || !deliveryAddress) {
       return res.status(400).json({ message: 'Invalid request data' });
@@ -98,7 +99,10 @@ export const getOrdersByRestaurant = async (req, res) => {
 // Rest of your controller functions remain the same
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findOne({
+      _id: req.params.id,
+      userId: req.userId
+    });
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
     res.status(200).json(order);
@@ -110,7 +114,22 @@ export const getOrderById = async (req, res) => {
 
 export const updateOrder = async (req, res) => {
   try {
-    const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const allowedFields = ['deliveryAddress', 'phoneNumber'];
+    const updates = Object.fromEntries(
+      allowedFields
+        .filter((field) => Object.prototype.hasOwnProperty.call(req.body, field))
+        .map((field) => [field, req.body[field]])
+    );
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No editable order fields supplied' });
+    }
+
+    const updated = await Order.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
+      { $set: updates },
+      { new: true, runValidators: true }
+    );
     if (!updated) return res.status(404).json({ message: 'Order not found' });
 
     res.status(200).json(updated);
@@ -122,7 +141,10 @@ export const updateOrder = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
   try {
-    const deleted = await Order.findByIdAndDelete(req.params.id);
+    const deleted = await Order.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId
+    });
     if (!deleted) return res.status(404).json({ message: 'Order not found' });
 
     res.status(200).json({ message: 'Order deleted successfully' });

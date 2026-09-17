@@ -25,6 +25,12 @@ JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v4-v7.mjs
 
 The runtime commands require the affected local services and synthetic fixtures. Do not print or commit JWTs, cookies, secrets, or unredacted logs.
 
+## Supporting security tools
+
+`evidence/tools/npm-audit.txt` records the tool versions, commands, advisory counts, and triage for the selected services. The advisories are not counted findings.
+
+OWASP ZAP is deferred by team decision because its Docker image download and scan exceed the available bandwidth. No ZAP result is claimed. Run the bounded local-gateway scan before submission and store a redacted result in `evidence/tools/`.
+
 ## WSO2 OIDC feature evidence
 
 The non-counted customer-login feature is recorded in `evidence/oidc-after.txt`. `security-tests/regression-oidc.mjs` checks source security contracts. `security-tests/oidc-mocked.mjs`, run in Node 20, proves S256 PKCE start parameters and rejects tampered state and nonce/ID-token validation failures. The real local WSO2 7.1.0 control completed with strict HttpOnly CraveDrop cookies and a protected-session response.

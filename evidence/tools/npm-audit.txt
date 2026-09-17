@@ -1,0 +1,35 @@
+# npm audit supporting-tool record
+
+Date (UTC): 2026-09-17
+
+Tool versions:
+
+- npm 12.0.2
+- Yarn 1.22.22
+
+Commands run from the modified repository:
+
+```text
+cd user-service && yarn audit --json
+cd order-service && npm audit --omit=dev --package-lock-only --json
+cd payment-service && npm audit --omit=dev --package-lock-only --json
+cd delivery-service && npm audit --omit=dev --package-lock-only --json
+cd driver-service && npm audit --omit=dev --package-lock-only --json
+```
+
+Results:
+
+| Service | Low | Moderate | High | Critical |
+|---|---:|---:|---:|---:|
+| user-service | 5 | 20 | 28 | 1 |
+| order-service | 0 | 3 | 3 | 1 |
+| payment-service | 0 | 2 | 1 | 0 |
+| delivery-service | 1 | 4 | 3 | 1 |
+| driver-service | 0 | 3 | 9 | 1 |
+
+Triage:
+
+- The audit reported dependency advisories only. It did not reproduce an application attack.
+- Critical dependency paths included `tar` in user-service and driver-service, and `form-data` in order-service and delivery-service.
+- These advisories are not counted as V1–V7. They require dependency-upgrade review and regression testing before remediation.
+- Do not use these counts as evidence that a specific CraveDrop endpoint is exploitable.

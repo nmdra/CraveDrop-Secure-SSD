@@ -1,0 +1,7 @@
+# OWASP ZAP status
+
+Date (UTC): 2026-09-17
+
+The bounded local-gateway scan is deferred by team decision. The OWASP ZAP Docker image download and scan exceed the available bandwidth.
+
+No ZAP report, alert, or finding is claimed from this incomplete attempt. Run and record the scan before submission.

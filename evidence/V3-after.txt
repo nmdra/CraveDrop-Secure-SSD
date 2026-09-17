@@ -1,0 +1,25 @@
+# V3: Order mass-assignment protection after fix
+
+Test source: `security-tests/runtime-v1-v3.mjs`
+
+## Blocked attack
+
+```text
+PUT /api/orders/0000000000000000000000e1 with userId, totalAmount, status, and createdAt
+HTTP/1.1 400 Bad Request
+{"message":"No editable order fields supplied"}
+```
+
+The client cannot use protected fields to change owner, price, payment state, or timestamps.
+
+## Authorised controls
+
+```text
+PUT /api/orders/0000000000000000000000e1 with deliveryAddress
+HTTP/1.1 200 OK
+
+POST /api/orders with Customer A token and a valid cash-order payload
+HTTP/1.1 201 Created
+```
+
+The customer can still update an allowed field and create an order. The response data uses synthetic fixtures only.

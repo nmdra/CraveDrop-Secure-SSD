@@ -1,0 +1,20 @@
+# V1: Payment authentication after fix
+
+Test source: `security-tests/runtime-v1-v3.mjs`
+
+## Blocked anonymous request
+
+```text
+POST /api/payments/create-payment-intent without Authorization
+HTTP/1.1 401 Unauthorized
+{"message":"Authentication required"}
+```
+
+## Authorised control
+
+```text
+POST /api/payments/create-payment-intent with a valid local HS256 customer token
+HTTP 500 from the synthetic Stripe key
+```
+
+The request passed authentication and reached the payment handler. The local test key intentionally prevents a real Stripe call, so this evidence does not claim a successful payment. The unauthenticated request is blocked before the handler.

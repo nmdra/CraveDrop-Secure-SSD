@@ -1,0 +1,22 @@
+# V2: Order ownership after fix
+
+Test source: `security-tests/runtime-v1-v3.mjs`
+
+## Blocked attack
+
+```text
+GET /api/orders/0000000000000000000000e1 with Customer B token
+HTTP/1.1 404 Not Found
+{"message":"Order not found"}
+```
+
+An unauthenticated read returned HTTP 401. Customer B cannot read Customer A's synthetic order because the repository query includes both the order id and the authenticated user id.
+
+## Authorised control
+
+```text
+GET /api/orders/0000000000000000000000e1 with Customer A token
+HTTP/1.1 200 OK
+```
+
+Customer A can still read the owned order. The response contains only synthetic fixture data.

@@ -13,7 +13,9 @@ export const authenticateOrderUser = (req, res, next) => {
   const token = authorization.slice('Bearer '.length).trim();
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+      algorithms: ['HS256']
+    });
 
     if (!decoded?.userId) {
       return res.status(401).json({ message: 'Invalid authentication token' });

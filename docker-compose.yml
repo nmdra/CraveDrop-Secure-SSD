@@ -243,7 +243,7 @@ services:
     container_name: payment-service
     hostname: payment-service
     ports:
-      - "3008:5000"
+      - "3008:5002"
     env_file:
       - ./payment-service/.env
     networks:

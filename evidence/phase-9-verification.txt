@@ -85,6 +85,12 @@ Result: passed. The clean clone built, the user/order/payment gateway health end
 
 A real OIDC customer login requires the separately documented local WSO2 client registration and synthetic user provisioning. That dynamic provider setup was not recreated in the fresh clone. Its prior real-flow control remains recorded in `evidence/oidc-after.txt`.
 
+## Pre-video archive inspection
+
+A local archive named `CraveDrop-Secure-SSD-submission-pre-video.zip` was generated from tracked commit `99a36fe` with `git archive`. It is explicitly a pre-video archive, not the final submission ZIP.
+
+The inspection confirmed that it contains `README.txt`, `README.md`, and `report/Report.pdf`; that the PDF opens; and that it contains no tracked `.env` files, `node_modules`, certificates, private keys, or credentials files. It was extracted into a separate temporary directory for inspection. The final archive must be regenerated after the unlisted video URL is added to both README files.
+
 ## Explicit exclusions
 
 - OWASP ZAP remains deferred. See `evidence/tools/zap-deferred.txt`.

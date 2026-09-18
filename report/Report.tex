@@ -223,7 +223,11 @@ The source-contract checks verify that the security controls remain in the chang
 \subsection{Supporting tools}
 The team ran \evidence{npm audit} against user, order, payment, delivery, and driver services. The commands, tool versions, and severity counts are recorded in \evidence{evidence/tools/npm-audit.txt}. These advisories are dependency-maintenance input, not counted application vulnerabilities, because no endpoint impact was reproduced.
 
-The OWASP ZAP local-gateway scan is deferred. The Docker image download and scan exceeded the available bandwidth. The repository records this honestly in \evidence{evidence/tools/zap-deferred.txt}; no ZAP result is claimed. A bounded local-gateway scan remains a pre-submission action when bandwidth is available.
+The team completed a local OWASP ZAP 2.17.0 passive scan on 2026-09-18. It used the headless package launcher, a conventional bounded spider, and passive rules against only \url{http://127.0.0.1:5000}. It made no active attack, authenticated request, WSO2 request, direct-service request, database request, RabbitMQ request, or external request. ZAP returned three medium and six low alert instances. The instances reduce to two shared gateway-hardening causes: missing CSP headers on fallback responses and Nginx version disclosure in fallback content and the \texttt{Server} header. Direct local header requests confirmed both observations. The alerts do not reproduce an application exploit and do not add a counted vulnerability. See \evidence{evidence/tools/zap-summary.md}.
+
+The team also ran Trivy 0.68.2 vulnerability-only scans on a fresh source clone and all 13 Compose images. The source scan returned 6 critical, 123 high, 163 medium, and 28 low dependency findings. The image scans returned 20 critical and 395 high alert instances in total. These are per-artifact totals, not a unique-CVE total, because the same dependency or base-image package occurs in multiple images. The detailed per-image counts, versions, and fixed-version data are in \evidence{evidence/tools/trivy-summary.md}.
+
+Trivy identified critical inventory candidates in \texttt{form-data}, \texttt{tar}, frontend Go components, frontend OpenSSL libraries, and infrastructure Go standard-library components. A scanner result identifies an installed version. It does not prove that an untrusted request reaches the vulnerable function. The team therefore classifies these as dependency and base-image maintenance risks until dependency-path, reachability, and manual validation work is complete. They do not add an eighth application vulnerability. The full triage record is \evidence{docs/security-tool-triage.md}.
 
 \section{WSO2 OpenID Connect customer login}\label{sec:oidc}
 \subsection{Feature objective}
@@ -252,7 +256,8 @@ Notification BOLA variants & These share an authorization root cause with other 
 XSS impact on cookie sessions & HttpOnly prevents token reads but not same-origin actions initiated by injected script. & Add a Content Security Policy, output encoding review, and XSS tests. \\
 Payment confirmation integration & The local control demonstrates trusted order state, not a real payment-provider confirmation. & Verify signed provider webhooks and bind each event to the trusted order and amount. \\
 Driver device and GPS integrity & API authorization cannot verify the physical source of a reported location. & Apply mobile/device controls and anomaly detection where appropriate. \\
-ZAP scan & The planned scan is deferred because of bandwidth limits. & Run and triage a bounded local-gateway ZAP scan before submission. \\
+Gateway response hardening & The completed passive ZAP scan found missing CSP headers and Nginx version disclosure on unauthenticated fallback responses. No exploit was reproduced. & Add a gateway CSP that is compatible with application routes. Disable version tokens and use non-versioned error responses. \\
+Dependency and base-image CVEs & The completed Trivy scan found critical and high dependency findings. Package reachability and exploitability are not yet established. & Trace selected findings to their dependency path, update compatible direct dependencies or image tags, then rebuild, rescan, and run focused regressions. \\
 \bottomrule
 \end{longtable}
 
@@ -284,7 +289,7 @@ Aluthwaththa A. W. D. S. M & IT22267290 & Synthetic fixtures, \evidence{89421a7}
 \end{longtable}
 
 \section{Conclusion}
-CraveDrop now has seven independently evidenced security fixes and a secure WSO2 OIDC customer-login feature. The work preserves a reproducible vulnerable baseline and verifies both blocked attacks and legitimate authorized flows. The report states remaining risks and the deferred ZAP scan without unsupported claims. The final submission must add the unlisted video URL to \evidence{README.txt}, run the remaining bounded scan if possible, regenerate the final ZIP, and upload it to CourseWeb.
+CraveDrop now has seven independently evidenced security fixes and a secure WSO2 OIDC customer-login feature. The work preserves a reproducible vulnerable baseline and verifies both blocked attacks and legitimate authorized flows. The report records completed ZAP and Trivy scans without presenting scanner alerts as application exploits or extra counted findings. The final submission must add the unlisted video URL to \evidence{README.txt}, complete selected dependency and gateway-hardening triage, regenerate the final ZIP, and upload it to CourseWeb.
 
 \begin{thebibliography}{9}
 \bibitem{assignment} SE4030, \textit{Secure Software Development Assignment}, 2026. Provided assignment brief.

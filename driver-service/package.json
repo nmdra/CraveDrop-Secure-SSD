@@ -5,22 +5,25 @@
   "main": "src/index.js",
   "type": "module",
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.13.2",
+    "mongoose": "^8.24.4",
     "nodemon": "^3.1.10"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["driver", "food-delivery", "microservice"],
+  "keywords": [
+    "driver",
+    "food-delivery",
+    "microservice"
+  ],
   "author": "",
   "license": "ISC"
 }

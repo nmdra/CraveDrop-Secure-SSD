@@ -12,7 +12,7 @@ This checklist records the remaining assignment work. The video has **not** been
 - [x] Complete one real local WSO2 synthetic-customer login. See `evidence/oidc-after.txt`.
 - [x] Confirm the protected endpoint returns HTTP 200 after login. See `evidence/oidc-after.txt`.
 - [x] Confirm no provider token appears in the callback URL or logs. See `evidence/oidc-after.txt`.
-- [ ] Review all evidence for secrets, tokens, cookies, credentials, and real personal data.
+- [x] Review all evidence for secrets, tokens, cookies, credentials, and real personal data.
 - [x] Confirm the report and finding matrix contain only seven counted findings.
 - [x] Record the non-video verification results in `evidence/phase-9-verification.txt`.
 
@@ -48,13 +48,15 @@ This checklist records the remaining assignment work. The video has **not** been
 
 ## E. Clean-clone verification
 
-- [ ] Clone the private modified repository into a new directory.
-- [ ] Copy only documented local example configuration values.
-- [ ] Run `docker compose up --build`.
-- [ ] Start the OIDC profile and complete one synthetic WSO2 login.
-- [ ] Run the focused V1–V7 and OIDC checks.
-- [ ] Verify `baseline-vulnerable` still resolves to commit `cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`.
-- [ ] Confirm the clean clone contains no committed `.env` files or credentials.
+- [x] Clone the private modified repository into a new directory.
+- [x] Create only ignored local configuration from the tracked `.env.example` values.
+- [x] Run `docker compose up --build` and verify core gateway health endpoints.
+- [ ] Recreate the local WSO2 client and synthetic user, then complete one clean-clone synthetic OIDC login.
+- [x] Run the focused V1–V7 and OIDC source/mock checks.
+- [x] Verify `baseline-vulnerable` still resolves to commit `cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`.
+- [x] Confirm the clean clone contains no committed `.env` files or credentials.
+
+Clean-clone evidence is recorded in `evidence/phase-9-verification.txt`. The real OIDC control remains evidenced separately in `evidence/oidc-after.txt` because a fresh WSO2 instance needs the manually documented client-registration and synthetic-user provisioning steps.
 
 ## F. ZIP inspection and final submission
 

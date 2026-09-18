@@ -218,7 +218,7 @@ OIDC & Not a baseline vulnerability & \evidence{evidence/oidc-after.txt} & \evid
 \bottomrule
 \end{longtable}
 
-The source-contract checks verify that the security controls remain in the changed routes and services. The runtime checks verify the HTTP behavior. The evidence files are redacted. They do not contain credentials, complete tokens, or cookies.
+The source-contract checks verify that the security controls remain in the changed routes and services. The runtime checks verify the HTTP behavior. The evidence files are redacted. They do not contain credentials, complete tokens, or cookies. A fresh clean clone built the Compose stack, passed the V1--V7 runtime and source checks, and recreated the documented WSO2 client and synthetic user for a real callback and protected-session control.
 
 \subsection{Supporting tools}
 The team ran \evidence{npm audit} against user, order, payment, delivery, and driver services. The commands, tool versions, and severity counts are recorded in \evidence{evidence/tools/npm-audit.txt}. These advisories are dependency-maintenance input, not counted application vulnerabilities, because no endpoint impact was reproduced.
@@ -284,7 +284,7 @@ Aluthwaththa A. W. D. S. M & IT22267290 & Synthetic fixtures, \evidence{89421a7}
 \end{longtable}
 
 \section{Conclusion}
-CraveDrop now has seven independently evidenced security fixes and a secure WSO2 OIDC customer-login feature. The work preserves a reproducible vulnerable baseline and verifies both blocked attacks and legitimate authorized flows. The report states remaining risks and the deferred ZAP scan without unsupported claims. The final submission must add the unlisted video URL to \evidence{README.txt}, run the remaining bounded scan if possible, and complete the clean-clone and ZIP checks.
+CraveDrop now has seven independently evidenced security fixes and a secure WSO2 OIDC customer-login feature. The work preserves a reproducible vulnerable baseline and verifies both blocked attacks and legitimate authorized flows. The report states remaining risks and the deferred ZAP scan without unsupported claims. The final submission must add the unlisted video URL to \evidence{README.txt}, run the remaining bounded scan if possible, regenerate the final ZIP, and upload it to CourseWeb.
 
 \begin{thebibliography}{9}
 \bibitem{assignment} SE4030, \textit{Secure Software Development Assignment}, 2026. Provided assignment brief.

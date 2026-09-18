@@ -83,7 +83,9 @@ node security-tests/regression-v4-v7.mjs
 
 Result: passed. The clean clone built, the user/order/payment gateway health endpoints returned 200, and the V1--V7 runtime and source checks passed against newly seeded synthetic data. The Node 20 OIDC source and mocked checks also passed after the clean clone installed its declared user-service dependencies.
 
-A real OIDC customer login requires the separately documented local WSO2 client registration and synthetic user provisioning. That dynamic provider setup was not recreated in the fresh clone. Its prior real-flow control remains recorded in `evidence/oidc-after.txt`.
+The fresh clone also recreated the documented WSO2 client registration and synthetic SCIM customer using runtime-only values. The local WSO2 certificate was renewed for the isolated lab and trusted explicitly by both the test application and WSO2 truststore. No application TLS validation was disabled.
+
+The real clean-clone flow returned callback HTTP 302, issued strict HttpOnly access and refresh cookies, expired the temporary flow cookie, redirected only to the allow-listed dashboard URL, and returned HTTP 200 from the protected validation endpoint. The callback's final redirect contained no provider token. The browser-flow driver used only synthetic credentials and redacted temporary files. `evidence/oidc-after.txt` remains the original local-lab control record.
 
 ## Pre-video archive inspection
 

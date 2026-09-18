@@ -11,14 +11,14 @@
         "dev": "nodemon -L server.js"
     },
     "dependencies": {
-        "bcrypt": "^5.1.1",
+        "bcrypt": "6.0.0",
         "cookie-parser": "^1.4.7",
         "dotenv": "^16.4.7",
         "express": "^5.1.0",
         "express-validator": "^7.2.1",
         "http-status-codes": "^2.3.0",
-        "jsonwebtoken": "^9.0.2",
         "jose": "6.2.12",
+        "jsonwebtoken": "^9.0.2",
         "pg": "^8.14.1",
         "pg-hstore": "^2.3.4",
         "pino": "^9.6.0",

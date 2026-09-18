@@ -253,7 +253,7 @@ The following risks were identified but are not claimed as fixed or counted as a
 \endhead
 Restaurant administration controls & The seven-findings scope uses driver availability for V5. Restaurant routes need an independent assessment and test set. & Review each restaurant mutation for verified role and ownership checks. \\
 Notification BOLA variants & These share an authorization root cause with other object-access findings. Counting them would inflate the seven-finding portfolio. & Assess them separately and add principal-scoped notification access. \\
-XSS impact on cookie sessions & HttpOnly prevents token reads but not same-origin actions initiated by injected script. & Add a Content Security Policy, output encoding review, and XSS tests. \\
+XSS impact on cookie sessions & HttpOnly prevents token reads but not same-origin actions initiated by injected script. & Review CSP coverage and output encoding, then add XSS tests. \\
 Payment confirmation integration & The local control demonstrates trusted order state, not a real payment-provider confirmation. & Verify signed provider webhooks and bind each event to the trusted order and amount. \\
 Driver device and GPS integrity & API authorization cannot verify the physical source of a reported location. & Apply mobile/device controls and anomaly detection where appropriate. \\
 Gateway response hardening & The ZAP verification scan retains three medium CSP policy-completeness alerts. No exploit was reproduced. & Review the remaining CSP directives and confirm compatibility with the frontend and API routes. \\

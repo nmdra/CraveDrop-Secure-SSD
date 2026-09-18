@@ -60,10 +60,12 @@ Clean-clone evidence is recorded in `evidence/phase-9-verification.txt`. The rea
 
 ## F. ZIP inspection and final submission
 
-- [ ] Include the required report, README files, source, evidence, and documentation.
-- [ ] Exclude `.env`, credentials, cookies, JWTs, build caches, `node_modules`, and Docker volumes.
-- [ ] Inspect the ZIP file list manually.
-- [ ] Open the PDF and README from the ZIP.
-- [ ] Confirm the ZIP opens from a separate directory.
-- [ ] Push all final commits to the modified repository.
-- [ ] Upload the ZIP to CourseWeb.
+- [x] Create and inspect a pre-video archive containing the report, README files, source, evidence, and documentation.
+- [x] Exclude `.env`, credentials, cookies, JWTs, build caches, `node_modules`, and Docker volumes.
+- [x] Inspect the pre-video ZIP file list manually.
+- [x] Open the PDF and README from the pre-video ZIP.
+- [x] Confirm the pre-video ZIP opens from a separate directory.
+- [x] Push the current finalisation commits to the modified repository.
+- [ ] Add the video URL, regenerate the final ZIP, and upload it to CourseWeb.
+
+The inspected local pre-video archive is recorded in `evidence/phase-9-verification.txt`. Do not submit it until the video URL is added and the final archive is regenerated.

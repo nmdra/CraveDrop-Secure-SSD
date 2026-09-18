@@ -51,12 +51,12 @@ This checklist records the remaining assignment work. The video has **not** been
 - [x] Clone the private modified repository into a new directory.
 - [x] Create only ignored local configuration from the tracked `.env.example` values.
 - [x] Run `docker compose up --build` and verify core gateway health endpoints.
-- [ ] Recreate the local WSO2 client and synthetic user, then complete one clean-clone synthetic OIDC login.
+- [x] Recreate the local WSO2 client and synthetic user, then complete one clean-clone synthetic OIDC login.
 - [x] Run the focused V1–V7 and OIDC source/mock checks.
 - [x] Verify `baseline-vulnerable` still resolves to commit `cb68a377f5b8cdc3b12f86883ac6fb703ef5e405`.
 - [x] Confirm the clean clone contains no committed `.env` files or credentials.
 
-Clean-clone evidence is recorded in `evidence/phase-9-verification.txt`. The real OIDC control remains evidenced separately in `evidence/oidc-after.txt` because a fresh WSO2 instance needs the manually documented client-registration and synthetic-user provisioning steps.
+Clean-clone evidence is recorded in `evidence/phase-9-verification.txt`. The fresh clone recreated the local WSO2 client and synthetic user, then completed the real callback and protected-session control. `evidence/oidc-after.txt` remains the original local-lab control record.
 
 ## F. ZIP inspection and final submission
 

@@ -13,6 +13,8 @@ export const authenticateDeliveryActor = (req, res, next) => {
   const token = authorization.slice('Bearer '.length).trim();
 
   try {
+    // Pin the expected algorithm so only tokens signed by this service's
+    // configured HMAC policy can establish a delivery actor identity.
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       algorithms: ['HS256']
     });
@@ -22,6 +24,7 @@ export const authenticateDeliveryActor = (req, res, next) => {
       return res.status(401).json({ message: 'Invalid authentication token' });
     }
 
+    // Controllers use this verified claim rather than a caller-supplied ID.
     req.actorId = String(actorId);
     return next();
   } catch {

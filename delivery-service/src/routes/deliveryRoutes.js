@@ -28,10 +28,9 @@ router.post('/assign-driver', assignDriverToDelivery);
 router.get('/:id', getDeliveryDetails);
 router.post('/assign-ready-orders', manuallyAssignDrivers);
 
-// Status dupdate route
+// Authentication must run before either driver-controlled mutation handler.
 router.patch('/:id/status', authenticateDeliveryActor, updateDeliveryStatus);
 
-// New driver location update route
 router.patch('/:id/driver-location', authenticateDeliveryActor, updateDriverLocation);
 
 export default router;

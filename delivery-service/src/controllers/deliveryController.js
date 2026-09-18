@@ -427,12 +427,14 @@ export const updateDeliveryStatus = async (req, res) => {
       });
     }
 
+    // Bind the mutation to the persisted assignment, not an ID from the body.
     if (String(delivery.driverid) !== String(req.actorId)) {
       return res.status(403).json({
         message: 'Only the assigned driver may update this delivery'
       });
     }
 
+    // Keep delivery state monotonic and reject skipped or reversed workflow steps.
     const allowedTransitions = {
       ASSIGNED: ['PICKED_UP', 'CANCELLED', 'FAILED'],
       PICKED_UP: ['IN_TRANSIT', 'CANCELLED', 'FAILED'],
@@ -510,6 +512,7 @@ export const updateDriverLocation = async (req, res) => {
       });
     }
 
+    // Location reports are accepted only from the delivery's assigned driver.
     if (String(delivery.driverid) !== String(req.actorId)) {
       return res.status(403).json({
         message: 'Only the assigned driver may update this delivery'

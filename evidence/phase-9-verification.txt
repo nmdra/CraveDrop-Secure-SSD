@@ -1,0 +1,75 @@
+# Phase 9 non-video verification record
+
+Date (UTC): 2026-09-18
+
+Scope: This record covers non-video, non-ZAP finalisation checks only. It contains no credentials, tokens, cookie values, or real customer data.
+
+## Environment and fixture checks
+
+```text
+node scripts/seed-security-fixtures.mjs reset
+node scripts/seed-security-fixtures.mjs verify
+```
+
+Result: passed. The ignored active fixture file matched the deterministic synthetic A/B fixture pack.
+
+## Compose and gateway checks
+
+```text
+docker compose config --quiet
+docker compose --profile oidc up --build -d
+```
+
+Result: passed. PostgreSQL and RabbitMQ became healthy. The core frontend, gateway, user, order, payment, driver, delivery, notification, email, MongoDB, and WSO2 containers were running.
+
+The gateway configuration was then verified with these unauthenticated health endpoints:
+
+```text
+GET http://127.0.0.1:5000/api/user/health      -> 200
+GET http://127.0.0.1:5000/api/orders/health    -> 200
+GET http://127.0.0.1:5000/api/payments/health  -> 200
+```
+
+The local SMS service requires valid Twilio credentials and is not a prerequisite for the seven security controls. No real Twilio credentials were used.
+
+## Focused V1--V7 verification
+
+The deterministic synthetic PostgreSQL and MongoDB records were seeded locally. The shared local test JWT secret was supplied through the ignored runtime environment and was not printed.
+
+```text
+JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v1-v3.mjs
+JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v4-v7.mjs
+node security-tests/regression-v1-v3.mjs WORKTREE
+node security-tests/regression-v4-v7.mjs
+```
+
+Result: all commands passed.
+
+- V1 blocks anonymous and expired-token payment requests while an authenticated request reaches the handler.
+- V2 blocks anonymous and foreign customer access while the owner reads the order.
+- V3 rejects protected fields while an allowed owner update and order creation succeed.
+- V4 blocks anonymous, customer, and unrelated-driver delivery writes while the assigned driver can make valid updates.
+- V5 blocks cross-driver availability updates while self-updates succeed.
+- V6 persists the trusted 2500 USD total and pending status despite tampered client fields.
+- V7 omits access tokens from login and refresh JSON, uses strict HttpOnly cookies, protects the profile session, and blocks refresh without the approved Origin.
+
+## Baseline and OIDC regression checks
+
+```text
+node security-tests/baseline-check.mjs baseline-vulnerable
+node security-tests/regression-oidc.mjs
+docker run --rm -v "$PWD:/workspace" -w /workspace node:20-bookworm-slim \
+  sh -lc 'NODE_ENV=development node security-tests/oidc-mocked.mjs'
+```
+
+Result: passed.
+
+The immutable baseline source check found all seven distinct vulnerable source conditions. The OIDC source check passed. The Node 20 mocked OIDC check confirmed state, nonce, and S256 PKCE parameters, rejected a tampered state before token exchange, and rejected invalid nonce or ID-token validation.
+
+The real WSO2 local synthetic-customer success and protected-session result remain recorded in `evidence/oidc-after.txt`. No new real-flow evidence is claimed by this record.
+
+## Explicit exclusions
+
+- OWASP ZAP remains deferred. See `evidence/tools/zap-deferred.txt`.
+- No video was recorded or uploaded.
+- `README.txt` and `README.md` still require the final unlisted video URL after recording.

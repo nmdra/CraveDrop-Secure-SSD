@@ -22,11 +22,12 @@ Contents
 - `docs/oidc-setup.md` describes the local WSO2 Identity Server 7.1.0 demonstration.
 
 Local run
-1. Copy each service `.env.example` file to an ignored `.env` file.
-2. Use local test values only. Do not commit the `.env` files.
-3. Start the application with `docker compose up --build`.
-4. Start WSO2 for the OIDC demonstration with `docker compose --profile oidc up wso2is`.
-5. Follow `docs/oidc-setup.md` to register the local client and synthetic customer.
+1. Copy each Compose service `.env.example` file to an ignored `.env` file.
+2. Generate one local JWT value and use that same value for `JWT_SECRET` in the user, order, payment, delivery, and driver service `.env` files.
+3. Use local test values only. Do not commit the `.env` files.
+4. Start the application with `docker compose up --build`.
+5. Start WSO2 for the OIDC demonstration with `docker compose --profile oidc up wso2is`.
+6. Follow `docs/oidc-setup.md` to register the local client and synthetic customer.
 
 Security verification
 - Reset fixtures: `node scripts/seed-security-fixtures.mjs reset`.

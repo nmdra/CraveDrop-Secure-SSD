@@ -2,8 +2,9 @@
 
 import { createHmac } from 'node:crypto';
 
-const orderUrl = process.env.ORDER_URL ?? 'http://127.0.0.1:5000';
-const paymentUrl = process.env.PAYMENT_URL ?? 'http://127.0.0.1:5002';
+// Docker Compose exposes the order and payment services on these host ports.
+const orderUrl = process.env.ORDER_URL ?? 'http://127.0.0.1:3007';
+const paymentUrl = process.env.PAYMENT_URL ?? 'http://127.0.0.1:3008';
 const deliveryUrl = process.env.DELIVERY_URL ?? 'http://127.0.0.1:3010';
 const driverUrl = process.env.DRIVER_URL ?? 'http://127.0.0.1:3009';
 const userUrl = process.env.USER_URL ?? 'http://127.0.0.1:3001';

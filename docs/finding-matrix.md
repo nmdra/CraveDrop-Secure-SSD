@@ -23,7 +23,7 @@ JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v1-v3.mjs
 JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v4-v7.mjs
 ```
 
-The runtime commands require the affected local services and synthetic fixtures. Do not print or commit JWTs, cookies, secrets, or unredacted logs.
+The runtime commands use the Docker Compose host ports by default: order `3007`, payment `3008`, delivery `3010`, driver `3009`, and user `3001`. They require the affected local services, synthetic fixtures, and the shared local JWT secret. Do not print or commit JWTs, cookies, secrets, or unredacted logs. The latest non-video verification record is `evidence/phase-9-verification.txt`.
 
 ## Supporting security tools
 

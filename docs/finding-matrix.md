@@ -29,7 +29,7 @@ The runtime commands use the Docker Compose host ports by default: order `3007`,
 
 `evidence/tools/npm-audit.txt` records the tool versions, commands, advisory counts, and triage for the selected services. The advisories are not counted findings.
 
-OWASP ZAP is deferred by team decision because its Docker image download and scan exceed the available bandwidth. No ZAP result is claimed. Run the bounded local-gateway scan before submission and store a redacted result in `evidence/tools/`.
+OWASP ZAP 2.17.0 was run against the bounded local gateway with passive spidering only. The initial findings and verification result are recorded in `evidence/tools/zap-summary.md`. The remaining CSP policy-completeness alert is gateway residual risk and is not counted as an eighth application vulnerability. Trivy and npm/Yarn audit records are in `evidence/tools/trivy-summary.md` and `evidence/tools/npm-audit.txt`.
 
 ## WSO2 OIDC feature evidence
 

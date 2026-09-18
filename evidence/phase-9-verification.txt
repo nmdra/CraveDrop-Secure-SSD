@@ -2,7 +2,7 @@
 
 Date (UTC): 2026-09-18
 
-Scope: This record covers non-video, non-ZAP finalisation checks only. It contains no credentials, tokens, cookie values, or real customer data.
+Scope: This record covers non-video finalisation checks. It contains no credentials, tokens, cookie values, or real customer data.
 
 ## Environment and fixture checks
 
@@ -68,6 +68,18 @@ The immutable baseline source check found all seven distinct vulnerable source c
 
 The real WSO2 local synthetic-customer success and protected-session result remain recorded in `evidence/oidc-after.txt`. No new real-flow evidence is claimed by this record.
 
+## Supporting-tool verification
+
+The bounded supporting-tool scans were completed against the local synthetic lab.
+
+```text
+OWASP ZAP 2.17.0 passive spider -> http://127.0.0.1:5000
+Trivy 0.68.2 vulnerability-only source and image scans
+npm/Yarn audit in the selected JavaScript services
+```
+
+Result: passed. The initial ZAP findings and the verification result are recorded in `evidence/tools/zap-summary.md`. The Trivy initial and post-remediation findings are recorded in `evidence/tools/trivy-summary.md`. The selected dependency updates and gateway hardening passed their source regression and rebuild/rescan checks. Remaining CSP policy-completeness, base-image, and unrelated dependency findings are recorded as residual maintenance risks. No scanner result was counted as an eighth application vulnerability.
+
 ## Clean-clone verification
 
 A fresh clone of commit `ef880c9` was created in a separate temporary directory. It contained no tracked `.env`, certificate, private-key, or credentials files. Only tracked `.env.example` values were used to create temporary, mode-0600 local configuration files.
@@ -95,6 +107,6 @@ The inspection confirmed that it contains `README.txt`, `README.md`, and `report
 
 ## Explicit exclusions
 
-- OWASP ZAP remains deferred. See `evidence/tools/zap-deferred.txt`.
 - No video was recorded or uploaded.
 - `README.txt` and `README.md` still require the final unlisted video URL after recording.
+- Final ZIP regeneration and CourseWeb upload remain pending the video URL.

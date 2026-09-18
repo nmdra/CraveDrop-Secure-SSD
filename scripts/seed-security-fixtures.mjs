@@ -5,6 +5,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+// The committed fixture pack is the canonical synthetic dataset. The active
+// copy is generated locally and remains ignored so test runs cannot alter it.
 const sourcePath = resolve(root, 'security-tests/fixtures/security-fixtures.json');
 const activePath = resolve(root, 'security-tests/fixtures/active-fixtures.json');
 
@@ -18,10 +20,12 @@ if (!allowedActions.has(action)) {
 
 const source = await readFile(sourcePath, 'utf8');
 const fixtures = JSON.parse(source);
+// Stable formatting makes verification a byte-for-byte reproducibility check.
 const normalized = `${JSON.stringify(fixtures, null, 2)}\n`;
 
 if (action === 'reset') {
   await mkdir(dirname(activePath), { recursive: true });
+  // Restrictive permissions keep even synthetic local test state private.
   await writeFile(activePath, normalized, { mode: 0o600 });
   console.log('Security fixtures reset to the deterministic synthetic A/B dataset.');
 } else {

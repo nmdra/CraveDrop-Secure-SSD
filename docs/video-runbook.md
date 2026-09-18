@@ -22,7 +22,7 @@ Target duration: 17 to 18 minutes. Do not exceed 20 minutes.
 | 9:00–11:00 | Sanjeewa | V6 amount and paid-state manipulation before and after. |
 | 11:00–13:00 | Hansaja | V7 token exposure before and after. |
 | 13:00–16:00 | Hansaja | WSO2 Authorization Code with PKCE, protected session, and invalid-state control. |
-| 16:00–17:00 | Aluthwaththa | npm audit triage, deferred ZAP status, residual risks, and prevention. |
+| 16:00–17:00 | Aluthwaththa | ZAP/Trivy findings, selected remediation, residual risks, and prevention. |
 | 17:00–18:00 | All | Contributions, repository, report, and conclusion. |
 
 ## Required demonstrations
@@ -32,7 +32,7 @@ Target duration: 17 to 18 minutes. Do not exceed 20 minutes.
 - Do not display JWTs, cookies, authorization codes, refresh tokens, credentials, or real data.
 - Show the WSO2 callback without provider tokens in the URL.
 - Show that the session uses HttpOnly cookies and reaches the protected endpoint.
-- State that ZAP is deferred if a scan result is still unavailable. Do not claim a scan result.
+- Show the redacted ZAP/Trivy summaries and state clearly that scanner alerts remain supporting evidence, not additional counted vulnerabilities.
 
 ## Closing checklist
 

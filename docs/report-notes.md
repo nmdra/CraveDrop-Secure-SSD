@@ -154,4 +154,4 @@ This is a required new feature. It is not an eighth counted vulnerability.
 
 `npm audit` ran against the user, order, payment, delivery, and driver services. It reported dependency advisories. Treat these as dependency-maintenance input only. Do not report an advisory as a counted application vulnerability without a reproduced impact.
 
-OWASP ZAP is deferred by team decision because the Docker image download and scan exceed the available bandwidth. No ZAP result is claimed. Run the bounded local-gateway scan before submission and store a redacted result.
+OWASP ZAP 2.17.0 completed a bounded passive scan against the local gateway. The initial missing-CSP and Nginx-disclosure findings were remediated. The verification scan retains a CSP policy-completeness alert, which is recorded as gateway residual risk. Trivy 0.68.2 completed source and image scans. Selected compatible updates were rebuilt and rescanned; remaining base-image and unrelated dependency advisories are not counted application vulnerabilities without reproduced impact. See `evidence/tools/zap-summary.md`, `evidence/tools/trivy-summary.md`, and `docs/security-tool-triage.md`.

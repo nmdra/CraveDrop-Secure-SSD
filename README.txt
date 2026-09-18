@@ -20,6 +20,9 @@ Contents
 - `docs/report-notes.md` contains the factual source notes for the report.
 - `report/Report.pdf` is the submitted report.
 - `docs/oidc-setup.md` describes the local WSO2 Identity Server 7.1.0 demonstration.
+- `evidence/tools/zap-summary.md` records the bounded ZAP scan and gateway residual risk.
+- `evidence/tools/trivy-summary.md` records Trivy findings, selected remediation, and residual base-image risk.
+- `docs/security-tool-triage.md` explains scanner scope and why scanner alerts do not add counted findings.
 
 Local run
 1. Copy each Compose service `.env.example` file to an ignored `.env` file.

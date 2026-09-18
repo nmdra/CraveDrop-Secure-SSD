@@ -18,9 +18,11 @@ This checklist records the remaining assignment work. The video has **not** been
 
 ## B. Supporting tools
 
-- [ ] Run the bounded OWASP ZAP scan against the local gateway when bandwidth permits.
-- [ ] Save a redacted ZAP result in `evidence/tools/`.
-- [ ] If ZAP cannot run, retain the honest deferred-scan record and do not claim completion.
+- [x] Run the bounded OWASP ZAP passive scan against the local gateway.
+- [x] Save the redacted initial and verification ZAP results in `evidence/tools/zap-summary.md`.
+- [x] Record the remaining CSP policy-completeness alert as gateway residual risk.
+- [x] Run the approved supporting Trivy source and image scans.
+- [x] Save the redacted Trivy findings, selected remediation, and residual base-image risk in `evidence/tools/trivy-summary.md`.
 - [x] Confirm `npm audit` evidence includes command, tool version, date, services, and limitations.
 
 ## C. Required assignment files

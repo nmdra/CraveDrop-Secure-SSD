@@ -234,11 +234,11 @@
 
 > We ran npm audit for the changed services. The results are recorded as dependency-maintenance input. We did not count an advisory as an application vulnerability without reproducing an endpoint impact.
 >
-> The OWASP ZAP scan is deferred if the scan has not been completed. We do not claim a ZAP result that was not obtained.
+> The bounded OWASP ZAP scan completed against the local gateway. It found gateway-hardening issues, the selected header fixes were verified, and one CSP policy-completeness item remains as residual risk. Trivy also recorded dependency and base-image maintenance risks. We do not count scanner alerts as application vulnerabilities without reproduced impact.
 >
 > Preventive practices include threat modelling, service-boundary authorization, server-owned state, field allow-lists, negative and positive regression tests, secure cookie sessions, dependency review, and redacted synthetic evidence.
 >
-> Remaining risks include restaurant authorization review, notification access review, XSS, payment-provider confirmation binding, driver-device integrity, and the deferred ZAP scan.
+> Remaining risks include restaurant authorization review, notification access review, XSS, payment-provider confirmation binding, driver-device integrity, the remaining CSP policy-completeness alert, and unremediated base-image advisories.
 
 **Show:** `evidence/tools/npm-audit.txt`, `docs/report-notes.md`, and the remaining-risk section of the PDF.
 
@@ -261,5 +261,5 @@
 - [ ] Hide browser cookies and token values.
 - [ ] Use only synthetic accounts.
 - [ ] Show both negative and positive controls.
-- [ ] Do not claim ZAP completion unless a result exists.
+- [x] Record the completed ZAP result and remaining CSP residual risk honestly.
 - [ ] Add the final unlisted YouTube URL to `README.txt` and `README.md` after recording.

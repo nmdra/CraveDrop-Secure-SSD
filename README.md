@@ -96,7 +96,7 @@ node security-tests/regression-oidc.mjs
 NODE_ENV=development node security-tests/oidc-mocked.mjs
 ```
 
-The evidence uses synthetic fixtures and redacted values only. Dependency audit results are recorded separately and are not counted as application vulnerabilities without reproduced impact. The OWASP ZAP scan is deferred and is not claimed as completed.
+The evidence uses synthetic fixtures and redacted values only. ZAP and Trivy findings are recorded separately as supporting scanner evidence. Dependency and base-image advisories are not counted as application vulnerabilities without reproduced impact. The bounded ZAP scan completed with a remaining CSP policy-completeness residual risk documented in `evidence/tools/zap-summary.md`.
 
 ## Licence
 

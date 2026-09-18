@@ -1,7 +1,5 @@
-# OWASP ZAP status
+# Superseded ZAP attempt
 
-Date (UTC): 2026-09-17
+An earlier Docker-based ZAP attempt was aborted before producing scan evidence because the image download exceeded the available bandwidth. No finding was claimed from that attempt.
 
-The bounded local-gateway scan is deferred by team decision. The OWASP ZAP Docker image download and scan exceed the available bandwidth.
-
-No ZAP report, alert, or finding is claimed from this incomplete attempt. Run and record the scan before submission.
+The bounded headless OWASP ZAP 2.17.0 scan was later completed successfully. See `evidence/tools/zap-summary.md` for the initial findings, verification scan, and residual CSP policy-completeness item.

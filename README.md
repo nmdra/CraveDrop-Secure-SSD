@@ -34,6 +34,19 @@ Seven distinct vulnerabilities were reproduced against the immutable baseline, f
 | V6 | Payment amount and state manipulation | The server calculates totals and owns payment state. |
 | V7 | Token exposure and session design | Browser sessions use strict HttpOnly cookies without bearer-token JSON or storage. |
 
+### V4-V6 delivery and payment controls
+
+The delivery mutation routes authenticate a signed actor before the controller compares that identity with the driver stored on the delivery. Status changes also pass through an explicit transition map, preventing skipped or reversed fulfilment states. Driver availability updates apply the same identity-to-record check so one driver cannot modify another driver's status.
+
+Order creation treats the product catalogue as the pricing authority. The service calculates totals from stored product prices, fixes the currency to USD, and creates card orders in the pending state regardless of conflicting client fields. Later payment confirmation must remain tied to trusted order data and a verified provider event.
+
+The primary implementation surfaces are:
+
+- `delivery-service/src/middleware/authMiddleware.js` and `delivery-service/src/controllers/deliveryController.js`
+- `driver-service/src/middleware/authMiddleware.js` and `driver-service/src/controllers/driverController.js`
+- `order-service/src/controller/order.controller.js`
+- `security-tests/runtime-v4-v7.mjs` and `security-tests/regression-v4-v7.mjs`
+
 The project also adds one customer login feature using WSO2 Identity Server 7.1.0 and OpenID Connect Authorization Code flow with S256 PKCE.
 
 ```mermaid

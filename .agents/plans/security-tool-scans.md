@@ -8,9 +8,11 @@ For the report, document an RCA for every **high/critical** finding and every lo
 
 ## Current State
 
-- The master plan now records the user-approved Trivy supporting-tool addition. Phase 7 is complete; only video and final upload work remain open in Phase 9.
+- The master plan records the user-approved Trivy supporting-tool addition. The bounded scans, triage, selected remediation, report integration, redacted appendices, and final source-PDF rebuild are complete; only video and final upload work remain open in Phase 9.
 - The local gateway is exposed on host port 5000 (`docker-compose.yml:157-182`). The Compose application images include frontend, user, notification, email, SMS, order, payment, driver, and delivery services (`docker-compose.yml:1-266`).
 - Existing npm-audit evidence distinguishes dependency advisories from reproduced application vulnerabilities (`evidence/tools/npm-audit.txt`). Completed ZAP and Trivy results are recorded in `evidence/tools/zap-summary.md` and `evidence/tools/trivy-summary.md`.
+- Final verification recorded zero missing-CSP-header and zero Nginx version-disclosure alerts, with three Medium CSP policy-completeness alerts remaining as gateway hardening. The final Trivy source export returned 0 Critical, 32 High, 72 Medium and 21 Low; the 14-image verification returned 16 Critical, 357 High, 358 Medium, 144 Low and 18 Unknown alert instances. Selected compatible dependency updates were rebuilt and rescanned; the remaining Node 22 Alpine `tar` 7.5.11 finding is a base-image maintenance risk.
+- The seven initial critical CVE candidates in the redacted Trivy evidence carry NVD record/lookup citations. The scanner package/version and reachability triage remains authoritative; none is a counted V1--V7 application finding.
 - Runtime secrets and active fixture data are ignored (`.gitignore:53-61`). Raw scanner files may contain URLs, package paths, and generated metadata, so they must be local-only until reviewed and redacted.
 - ZAP baseline scans spider a target and passively scan it. ZAP supports HTML, Markdown, XML, and JSON reports and rule severity/exit handling. Source: <https://www.zaproxy.org/docs/docker/baseline-scan/>.
 - Trivy supports filesystem and image vulnerability scanning, JSON reports, severity filtering, and dependency-path output. Do not use `--ignore-unfixed`, because it would hide unresolved CVEs needed for triage. Sources: <https://trivy.dev/docs/latest/configuration/filtering/>, <https://trivy.dev/docs/v0.57/configuration/reporting/>, and <https://trivy.dev/docs/v0.57/guide/references/configuration/cli/trivy_filesystem/>.
@@ -68,8 +70,8 @@ The scan work is complete only when all of the following are true:
 7. No report/evidence/raw committed file includes credentials, complete cookies/JWTs, authorization codes, `.env` values, or real personal data.
 8. The report, finding matrix, and submission checklist continue to state exactly seven counted application vulnerabilities.
 
-## Open Questions
+## Resolved Questions
 
-- What executable path does the system-installed ZAP package provide, and does it include a supported baseline/passive headless launcher?
-- Is Trivy already installed system-wide, or may it be installed before Task 2?
-- Should the final report include the complete high/critical RCA table inline, or place it in a report appendix with `docs/security-tool-triage.md` as the detailed repository record?
+- The package launcher `/usr/share/zaproxy/zap.sh -daemon` provided the supported headless path; the GUI wrapper was not used.
+- Trivy 0.68.2 ran from the pinned `aquasec/trivy:0.68.2` image, with vulnerability scanning only and unfixed findings included.
+- The report uses complete redacted ZAP and Trivy appendices, while `docs/security-tool-triage.md` remains the detailed repository RCA record. The native report also retains NVD CVE citations without promoting scanner-only results to V8+.

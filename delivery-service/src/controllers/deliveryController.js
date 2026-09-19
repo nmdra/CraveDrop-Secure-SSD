@@ -451,6 +451,8 @@ export const updateDeliveryStatus = async (req, res) => {
     delivery.status = status;
     await delivery.save();
 
+    // Run cross-service side effects only after both assignment ownership and
+    // the delivery state transition have been accepted above.
     // If delivery is marked as DELIVERED, update the corresponding order status
     if (status === 'DELIVERED') {
       const order = await Order.findOne({ orderID: delivery.orderID });
@@ -461,7 +463,7 @@ export const updateDeliveryStatus = async (req, res) => {
       }
     }
 
-    // If delivery is marked as FAILED or CANCELLED, update driver availability
+    // Terminal failure states release the assigned driver for future work.
     if (status === 'FAILED' || status === 'CANCELLED') {
       try {
         await updateDriverAvailability(delivery.driverid, true);

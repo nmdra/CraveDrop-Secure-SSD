@@ -58,6 +58,7 @@ export const createOrder = async (req, res) => {
       status: 'pending',
     });
 
+    // Persist the catalogue-derived price snapshot for later reconciliation.
     await order.save();
 
     //TODO call notification

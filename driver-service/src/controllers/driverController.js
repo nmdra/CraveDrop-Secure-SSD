@@ -208,7 +208,8 @@ export const updateDriverAvailability = async (req, res, next) => {
             });
         }
 
-        // Update driver availability
+        // Only the self-owned record reaches this update; model validation is
+        // still applied to the persisted availability value.
         const driver = await Driver.findByIdAndUpdate(
             req.driver._id,
             { isAvailable: Boolean(isAvailable) },

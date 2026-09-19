@@ -13,12 +13,13 @@ const protect = async (req, res, next) => {
     try {
       // Extract token from header
       token = req.headers.authorization.split(' ')[1];
-      // Verify token
+      // Pin token verification to the algorithm used by this service.
       const decoded = jwt.verify(token, process.env.JWT_SECRET, {
         algorithms: ['HS256']
       });
 
-      // Get driver from token ID (exclude password)
+      // Load the actor from the signed subject; request parameters cannot
+      // choose which authenticated driver is attached to the request.
       req.driver = await Driver.findById(decoded.id).select('-password');
 
       if (!req.driver) {

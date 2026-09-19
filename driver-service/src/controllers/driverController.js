@@ -298,11 +298,9 @@ export const getDriverById = async (req, res, next) => {
 };
 
 
-// Add this function to c:\Users\LKsnj\Desktop\New folder\sCraveDrop\driver-service\src\controllers\driverController.js
-
-// @desc    Update driver availability by ID (for other services)
+// @desc    Update the authenticated driver's availability by ID
 // @route   PUT /driver/:id/availability
-// @access  Public (for internal services)
+// @access  Private (driver token required)
 export const updateDriverAvailabilityById = async (req, res, next) => {
     try {
         const driverId = req.params.id;
@@ -315,6 +313,8 @@ export const updateDriverAvailabilityById = async (req, res, next) => {
             });
         }
 
+        // The URL identifies the target record; the verified token identifies
+        // the actor. Both must refer to the same driver before any write.
         if (String(req.driver?._id) !== String(driverId)) {
             return res.status(StatusCodes.FORBIDDEN).json({
                 message: 'A driver may update only their own availability'

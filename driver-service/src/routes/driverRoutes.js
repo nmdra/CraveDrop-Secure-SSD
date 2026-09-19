@@ -21,7 +21,7 @@ router.get('/all',  getAllDrivers);  // Added new route for getting all drivers
 // Get driver by ID - accessible by other services
 router.get('/:id', getDriverById);
 
-// Update driver availability by ID - for use by other services
+// Protect the ID-scoped write before enforcing self-ownership in the controller.
 router.put('/:id/availability', protect, updateDriverAvailabilityById);
 
 // Protected routes

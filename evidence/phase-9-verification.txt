@@ -82,7 +82,7 @@ Result: passed. The initial ZAP findings and the verification result are recorde
 
 ## Clean-clone verification
 
-A fresh clone of commit `ef880c9` was created in a separate temporary directory. It contained no tracked `.env`, certificate, private-key, or credentials files. Only tracked `.env.example` values were used to create temporary, mode-0600 local configuration files.
+A fresh clone of commit `d1097b0` was created in a separate temporary directory. It contained no tracked `.env`, certificate, private-key, or credentials files. Only tracked `.env.example` values were used to create temporary, mode-0600 local configuration files.
 
 ```text
 docker compose --profile oidc config --quiet
@@ -101,7 +101,7 @@ The real clean-clone flow returned callback HTTP 302, issued strict HttpOnly acc
 
 ## Pre-video archive inspection
 
-A local archive named `CraveDrop-Secure-SSD-submission-pre-video.zip` was generated from tracked commit `99a36fe` with `git archive`. It is explicitly a pre-video archive, not the final submission ZIP.
+A local archive named `CraveDrop-Secure-SSD-submission-pre-video.zip` was generated from tracked commit `095992b` with `git archive`. It is explicitly a pre-video archive, not the final submission ZIP.
 
 The inspection confirmed that it contains `README.txt`, `README.md`, and `report/Report.pdf`; that the PDF opens; and that it contains no tracked `.env` files, `node_modules`, certificates, private keys, or credentials files. It was extracted into a separate temporary directory for inspection. The final archive must be regenerated after the unlisted video URL is added to both README files.
 

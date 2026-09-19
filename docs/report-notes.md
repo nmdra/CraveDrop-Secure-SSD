@@ -26,7 +26,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** The service still depends on correct Stripe configuration and payment-provider controls. The assessment does not prove a live card charge.
 
-**Evidence and commits:** `evidence/V1-before.txt`, `evidence/V1-after.txt`, `security-tests/runtime-v1-v3.mjs`, `4904430`, and `2e7d8bf`.
+**Evidence and commits:** `evidence/V1-before.txt`, `evidence/V1-after.txt`, `security-tests/runtime-v1-v3.mjs`, `4dc9756`, and `720a077`.
 
 ## V2: Order IDOR or BOLA
 
@@ -44,7 +44,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** The order ID remains an identifier. Access safety depends on all order routes continuing to apply the ownership scope.
 
-**Evidence and commits:** `evidence/V2-before.txt`, `evidence/V2-after.txt`, `security-tests/runtime-v1-v3.mjs`, `4904430`, and `2e7d8bf`.
+**Evidence and commits:** `evidence/V2-before.txt`, `evidence/V2-after.txt`, `security-tests/runtime-v1-v3.mjs`, `4dc9756`, and `720a077`.
 
 ## V3: Order mass assignment
 
@@ -62,7 +62,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** New editable order fields need an explicit review before they enter the allow-list.
 
-**Evidence and commits:** `evidence/V3-before.txt`, `evidence/V3-after.txt`, `security-tests/runtime-v1-v3.mjs`, `4904430`, and `2e7d8bf`.
+**Evidence and commits:** `evidence/V3-before.txt`, `evidence/V3-after.txt`, `security-tests/runtime-v1-v3.mjs`, `4dc9756`, and `720a077`.
 
 ## V4: Unauthorized delivery mutation
 
@@ -80,7 +80,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** The service does not prove device integrity or GPS accuracy.
 
-**Evidence and commits:** `evidence/V4-before.txt`, `evidence/V4-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `2f58bbf`, and `8505d31`.
+**Evidence and commits:** `evidence/V4-before.txt`, `evidence/V4-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
 
 ## V5: Broken administrative authorization
 
@@ -98,7 +98,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** This finding covers driver availability only. Restaurant administration requires separate review before it can be claimed as protected.
 
-**Evidence and commits:** `evidence/V5-before.txt`, `evidence/V5-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `2f58bbf`, and `8505d31`.
+**Evidence and commits:** `evidence/V5-before.txt`, `evidence/V5-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
 
 ## V6: Payment amount and state manipulation
 
@@ -116,7 +116,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** A later payment confirmation must remain bound to trusted order data and a verified provider event.
 
-**Evidence and commits:** `evidence/V6-before.txt`, `evidence/V6-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `2f58bbf`, and `8505d31`.
+**Evidence and commits:** `evidence/V6-before.txt`, `evidence/V6-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
 
 ## V7: Sensitive token disclosure and session design
 
@@ -134,7 +134,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** XSS can still perform same-origin actions while a session exists. Content Security Policy and broader XSS review remain future work.
 
-**Evidence and commits:** `evidence/V7-before.txt`, `evidence/V7-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `2f58bbf`, and `8505d31`.
+**Evidence and commits:** `evidence/V7-before.txt`, `evidence/V7-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
 
 ## WSO2 OIDC customer-login feature
 
@@ -148,7 +148,7 @@ This is a required new feature. It is not an eighth counted vulnerability.
 
 **Provider-claim note:** The local WSO2 user store released only `sub`. CraveDrop did not infer or link an email. It stored a deterministic non-deliverable `@identity.invalid` placeholder and retained issuer-plus-subject identity binding.
 
-**Evidence and commit:** `evidence/oidc-after.txt`, `security-tests/regression-oidc.mjs`, `security-tests/oidc-mocked.mjs`, and `4a440d1`.
+**Evidence and commit:** `evidence/oidc-after.txt`, `security-tests/regression-oidc.mjs`, `security-tests/oidc-mocked.mjs`, and `28e178c`.
 
 ## Supporting-tool record
 

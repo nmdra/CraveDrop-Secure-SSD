@@ -142,7 +142,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix Payment routes now require a verified Bearer JWT. The service derives the caller identity from the verified token rather than request input.
 
-\control The same anonymous action returns 401. An authenticated synthetic customer reaches the payment-start handler. The local Stripe test configuration rejects the request after authorization, which proves the authorization boundary but not a real card charge. See \evidence{evidence/V1-after.txt}, \evidence{security-tests/runtime-v1-v3.mjs}, commits \evidence{4904430} and \evidence{2e7d8bf}.
+\control The same anonymous action returns 401. An authenticated synthetic customer reaches the payment-start handler. The local Stripe test configuration rejects the request after authorization, which proves the authorization boundary but not a real card charge. See \evidence{evidence/V1-after.txt}, \evidence{security-tests/runtime-v1-v3.mjs}, commits \evidence{4dc9756} and \evidence{720a077}.
 
 \residual Stripe configuration and provider-side controls remain necessary. This assessment does not process a live card charge.
 
@@ -153,7 +153,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix Order reads and mutations now require an authenticated customer. The controller scopes the order query to both the requested order ID and the verified customer ID.
 
-\control Customer B receives 404 when requesting Customer A's order. Customer A can read the owned order. Evidence is \evidence{evidence/V2-after.txt}; the runtime control is \evidence{security-tests/runtime-v1-v3.mjs}; the commits are \evidence{4904430} and \evidence{2e7d8bf}.
+\control Customer B receives 404 when requesting Customer A's order. Customer A can read the owned order. Evidence is \evidence{evidence/V2-after.txt}; the runtime control is \evidence{security-tests/runtime-v1-v3.mjs}; the commits are \evidence{4dc9756} and \evidence{720a077}.
 
 \residual The order ID remains an identifier. Every future order route must preserve the ownership scope.
 
@@ -164,7 +164,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix The controller rejects protected fields and allow-lists only supported customer-editable fields. The server owns order identity, price, payment state, and timestamps.
 
-\control A payload containing protected fields returns 400. A valid authorized update and order creation succeed. See \evidence{evidence/V3-after.txt}, \evidence{security-tests/runtime-v1-v3.mjs}, commits \evidence{4904430} and \evidence{2e7d8bf}.
+\control A payload containing protected fields returns 400. A valid authorized update and order creation succeed. See \evidence{evidence/V3-after.txt}, \evidence{security-tests/runtime-v1-v3.mjs}, commits \evidence{4dc9756} and \evidence{720a077}.
 
 \residual A new editable field must undergo explicit review before it is added to the allow-list.
 
@@ -175,7 +175,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix Delivery writes require a valid driver JWT, an assigned-driver identity match, and an allow-listed status transition.
 
-\control Anonymous, customer, and unrelated-driver writes fail. The assigned driver can make the demonstrated valid status and location updates. A reverse transition returns 409. See \evidence{evidence/V4-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
+\control Anonymous, customer, and unrelated-driver writes fail. The assigned driver can make the demonstrated valid status and location updates. A reverse transition returns 409. See \evidence{evidence/V4-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{c84ec0a} and \evidence{132f768}.
 
 \residual The service does not prove the integrity of a driver device or GPS source.
 
@@ -186,7 +186,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix Driver availability updates now require a valid driver JWT. The verified driver ID must match the URL driver ID.
 
-\control One driver cannot update another driver's availability. A driver can update own availability. See \evidence{evidence/V5-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
+\control One driver cannot update another driver's availability. A driver can update own availability. See \evidence{evidence/V5-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{c84ec0a} and \evidence{132f768}.
 
 \residual This finding covers driver availability only. Restaurant administration requires separate review before it can be claimed as protected.
 
@@ -197,7 +197,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix The order service calculates the USD total from trusted product data. It ignores client currency and paid-status fields. New card orders start in the pending state.
 
-\control Tampered amount, currency, and payment-state values do not control the persisted order. The test persists 2500 USD and pending state. An authenticated customer can create a server-priced order. See \evidence{evidence/V6-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
+\control Tampered amount, currency, and payment-state values do not control the persisted order. The test persists 2500 USD and pending state. An authenticated customer can create a server-priced order. See \evidence{evidence/V6-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{c84ec0a} and \evidence{132f768}.
 
 \residual A future confirmation path must bind a trusted order to a verified payment-provider event.
 
@@ -208,7 +208,7 @@ V7 & Sensitive token disclosure and session design & CWE-922, CWE-532; OWASP API
 
 \fix Login and refresh now issue credentialed strict HttpOnly cookies. The frontend no longer stores bearer tokens. Request logging records the request path but omits query values, which also prevents OIDC authorization-code logging. Cookie mutations require the approved Origin.
 
-\control Login and refresh JSON omit access tokens. Browser storage and application logs do not contain bearer tokens. A missing or wrong Origin blocks cookie mutation. An approved-origin session can access profile and refresh operations. See \evidence{evidence/V7-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{2f58bbf} and \evidence{8505d31}.
+\control Login and refresh JSON omit access tokens. Browser storage and application logs do not contain bearer tokens. A missing or wrong Origin blocks cookie mutation. An approved-origin session can access profile and refresh operations. See \evidence{evidence/V7-after.txt}, \evidence{security-tests/runtime-v4-v7.mjs}, \evidence{security-tests/regression-v4-v7.mjs}, commits \evidence{c84ec0a} and \evidence{132f768}.
 
 \residual HttpOnly cookies reduce token theft but do not prevent a successful XSS attack from making same-origin requests while a session exists.
 
@@ -260,7 +260,7 @@ The local CraveDrop account key is the provider issuer plus subject. The service
 \subsection{Feature verification}
 A synthetic WSO2 customer completed a real local flow. The callback returned HTTP 302 to an allow-listed dashboard path, issued strict HttpOnly CraveDrop session cookies, expired the temporary flow cookie, and authorized a protected validation endpoint. No provider token appeared in the callback URL.
 
-The mocked Node 20 suite confirms that a tampered state is rejected before token exchange and that an invalid nonce or identity token is rejected. The proof is \evidence{evidence/oidc-after.txt}; the tests are \evidence{security-tests/regression-oidc.mjs} and \evidence{security-tests/oidc-mocked.mjs}; the implementation commit is \evidence{4a440d1}.
+The mocked Node 20 suite confirms that a tampered state is rejected before token exchange and that an invalid nonce or identity token is rejected. The proof is \evidence{evidence/oidc-after.txt}; the tests are \evidence{security-tests/regression-oidc.mjs} and \evidence{security-tests/oidc-mocked.mjs}; the implementation commit is \evidence{28e178c}.
 
 \section{Remaining vulnerabilities and limitations}\label{sec:remaining}
 The following risks were identified but are not claimed as fixed or counted as additional vulnerabilities.
@@ -300,10 +300,10 @@ The repository records work in coherent commits. The final video must show each 
 \rowcolor{tableblue}\textbf{Member} & \textbf{Registration number} & \textbf{Allocated work and evidence} \\
 \midrule
 \endhead
-Hansaja A. M. G & IT22171856 & User-session and token hardening, WSO2 OIDC login, \evidence{4a440d1}, \evidence{evidence/oidc-after.txt}, and OIDC video segment. \\
-Dharmasiri I. D. N. D & IT22254320 & Order authentication, BOLA, mass-assignment controls, \evidence{4904430}, \evidence{2e7d8bf}, and V1--V3 video segments. \\
-Sanjeewa P. D. L. B & IT22629708 & Delivery and driver authorization, payment integrity, \evidence{2f58bbf}, \evidence{8505d31}, and V4--V6 video segments. \\
-Aluthwaththa A. W. D. S. M & IT22267290 & Synthetic fixtures, \evidence{89421a7}, tool evidence, report material, README, submission packaging, and video segments. \\
+Hansaja A. M. G & IT22171856 & User-session and token hardening, WSO2 OIDC login, \evidence{28e178c}, \evidence{evidence/oidc-after.txt}, and OIDC video segment. \\
+Dharmasiri I. D. N. D & IT22254320 & Order authentication, BOLA, mass-assignment controls, \evidence{4dc9756}, \evidence{720a077}, and V1--V3 video segments. \\
+Sanjeewa P. D. L. B & IT22629708 & Delivery and driver authorization, payment integrity, \evidence{c84ec0a}, \evidence{132f768}, and V4--V6 video segments. \\
+Aluthwaththa A. W. D. S. M & IT22267290 & Synthetic fixtures, \evidence{ced39e3}, tool evidence, report material, README, submission packaging, and video segments. \\
 \bottomrule
 \end{longtable}
 

@@ -9,6 +9,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const evidenceDir = resolve(root, 'evidence');
 const baselineRef = process.argv[2] ?? 'baseline-vulnerable';
 
+// Read the preserved baseline directly from Git so evidence generation never
+// requires checking vulnerable files into the working tree.
 const source = (path) => execFileSync('git', ['show', `${baselineRef}:${path}`], {
   cwd: root,
   encoding: 'utf8',
@@ -109,6 +111,8 @@ const lineOf = (text, needle) => {
 await mkdir(evidenceDir, { recursive: true });
 let failed = false;
 
+// Each record couples a reproduction recipe with the exact vulnerable source
+// condition, keeping the generated evidence traceable and repeatable.
 for (const finding of checks) {
   const lines = [`# ${finding.id}: ${finding.title}`, '', `Baseline reference: ${baselineRef}`, `Primary mapping: ${finding.cwe}`, '', '## Reproduction request', '', '```bash', finding.request, '```', '', '## Baseline source result', ''];
   for (const [path, needle] of finding.evidence) {

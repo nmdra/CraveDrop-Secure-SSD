@@ -27,15 +27,17 @@ The initial critical inventory included:
 
 | Identifier | Package and installed version | Fixed version reported by Trivy | Affected artifacts |
 |---|---|---|---|
-| `CVE-2025-44005` | `github.com/smallstep/certificates` `v0.26.1` | `0.29.0` | Frontend image |
-| `CVE-2025-68121` | Go standard library `v1.24.2` or `v1.24.6` | `1.24.13`, `1.25.7`, or `1.26.0-rc.3` | Frontend and infrastructure images |
-| `CVE-2025-7783` | `form-data` `4.0.2` | `4.0.4` | SMS image and source scan |
-| `CVE-2026-30836` | `github.com/smallstep/certificates` `v0.26.1` | `0.30.0` | Frontend image |
-| `CVE-2026-31789` | `libcrypto3` and `libssl3` `3.3.4-r0` | `3.3.7-r0` | Frontend image |
-| `CVE-2026-33186` | `google.golang.org/grpc` `v1.67.1` | `1.79.3` | Frontend image |
-| `CVE-2026-59873` | `tar` `6.2.1` or `7.5.11` | `7.5.19` | Node service images and source dependency trees |
+| [`CVE-2025-44005`](https://nvd.nist.gov/vuln/detail/CVE-2025-44005) | `github.com/smallstep/certificates` `v0.26.1` | `0.29.0` | Frontend image |
+| [`CVE-2025-68121`](https://nvd.nist.gov/vuln/detail/CVE-2025-68121) | Go standard library `v1.24.2` or `v1.24.6` | `1.24.13`, `1.25.7`, or `1.26.0-rc.3` | Frontend and infrastructure images |
+| [`CVE-2025-7783`](https://nvd.nist.gov/vuln/detail/CVE-2025-7783) | `form-data` `4.0.2` | `4.0.4` | SMS image and source scan |
+| [`CVE-2026-30836`](https://nvd.nist.gov/vuln/detail/CVE-2026-30836) | `github.com/smallstep/certificates` `v0.26.1` | `0.30.0` | Frontend image |
+| [`CVE-2026-31789`](https://nvd.nist.gov/vuln/detail/CVE-2026-31789) | `libcrypto3` and `libssl3` `3.3.4-r0` | `3.3.7-r0` | Frontend image |
+| [`CVE-2026-33186`](https://nvd.nist.gov/vuln/detail/CVE-2026-33186) | `google.golang.org/grpc` `v1.67.1` | `1.79.3` | Frontend image |
+| [`CVE-2026-59873`](https://nvd.nist.gov/vuln/detail/CVE-2026-59873) | `tar` `6.2.1` or `7.5.11` | `7.5.19` | Node service images and source dependency trees |
 
 These scanner results did not prove an application exploit or add a counted vulnerability.
+
+The CVE links above are NVD record/lookup citations. Trivy's package, installed-version, fixed-version, artifact and reachability triage remain the authoritative evidence for this scan; a scanner identifier is not a reproduced CraveDrop vulnerability.
 
 ## Applied compatible remediation
 

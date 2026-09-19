@@ -40,12 +40,14 @@ The initial source scan returned 6 critical, 123 high, 163 medium, and 28 low fi
 
 The initial critical inventory included:
 
-- `CVE-2025-44005` and `CVE-2026-30836` in frontend smallstep components.
-- `CVE-2025-68121` in Go standard-library layers.
-- `CVE-2025-7783` in `form-data` 4.0.2.
-- `CVE-2026-31789` in frontend OpenSSL libraries.
-- `CVE-2026-33186` in frontend gRPC.
-- `CVE-2026-59873` in `tar` dependency/base-image layers.
+- [`CVE-2025-44005`](https://nvd.nist.gov/vuln/detail/CVE-2025-44005) and [`CVE-2026-30836`](https://nvd.nist.gov/vuln/detail/CVE-2026-30836) in frontend smallstep components.
+- [`CVE-2025-68121`](https://nvd.nist.gov/vuln/detail/CVE-2025-68121) in Go standard-library layers.
+- [`CVE-2025-7783`](https://nvd.nist.gov/vuln/detail/CVE-2025-7783) in `form-data` 4.0.2.
+- [`CVE-2026-31789`](https://nvd.nist.gov/vuln/detail/CVE-2026-31789) in frontend OpenSSL libraries.
+- [`CVE-2026-33186`](https://nvd.nist.gov/vuln/detail/CVE-2026-33186) in frontend gRPC.
+- [`CVE-2026-59873`](https://nvd.nist.gov/vuln/detail/CVE-2026-59873) in `tar` dependency/base-image layers.
+
+The links are NVD record/lookup citations. The Trivy package/version, affected-artifact, reachability and remediation evidence remains authoritative for this run; these scanner identifiers are not additional V1–V7 findings.
 
 The selected compatible application-level remediation was:
 

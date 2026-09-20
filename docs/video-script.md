@@ -126,6 +126,7 @@
 3. Assigned-driver status update succeeding.
 4. Invalid reverse transition returning HTTP 409.
 5. Assigned-driver location update succeeding.
+6. The authenticated routes and ownership/transition checks in `deliveryRoutes.js` and `deliveryController.js`.
 
 **Say:**
 
@@ -147,6 +148,7 @@
 2. Driver A attempting to update Driver B and receiving denial.
 3. Driver A updating their own availability successfully.
 4. `evidence/V5-after.txt` and the runtime test.
+5. The protected ID-scoped route and self-ownership comparison in the driver service.
 
 **Say:**
 
@@ -169,6 +171,7 @@
 3. After-fix response or persisted-state output showing 2500 USD and pending status.
 4. Valid authenticated order creation.
 5. `evidence/V6-after.txt` and the runtime test.
+6. The catalogue-derived total and server-owned fields in `order.controller.js`.
 
 **Say:**
 

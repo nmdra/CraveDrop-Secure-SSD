@@ -11,6 +11,8 @@ const expect = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
+// Scanner follow-up checks remain supporting hardening evidence; they do not
+// create additional numbered application findings beyond V1-V7.
 const nginx = read('api-gateway/nginx.conf');
 expect(nginx.includes('server_tokens off;'), 'Gateway still exposes the Nginx version token');
 expect(
@@ -18,6 +20,8 @@ expect(
   'Gateway fallback responses lack the required Content-Security-Policy',
 );
 
+// Assert exact remediated resolutions so a future lockfile refresh cannot
+// silently restore the package versions recorded by the original scans.
 for (const service of ['delivery-service', 'order-service']) {
   const lock = json(`${service}/package-lock.json`).packages;
   expect(lock['node_modules/axios']?.version === '1.20.0', `${service} does not lock Axios 1.20.0`);

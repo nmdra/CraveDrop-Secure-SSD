@@ -17,7 +17,8 @@ export const createOrder = async (req, res) => {
     let calculatedTotalAmount = 0;
     const enrichedItems = [];
 
-    // Validate and enrich products
+    // Resolve every product from the trusted catalogue. Client-supplied prices
+    // never participate in the total persisted for the order.
     for (const item of items) {
       const product = await Product.findById(item.productId);
       if (!product) {
@@ -35,16 +36,16 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // For card payments, we already processed the payment in the frontend
-    // so we don't need to call the payment service again
+    // Order creation does not accept a client claim that a card payment has
+    // completed; provider confirmation belongs to a separate verified flow.
     if (paymentMethod === 'card') {
-      // If payment was already processed, we use the totalAmount from the request
-      // and we don't need to generate a new client secret
+      // Keep the new order pending until trusted payment confirmation arrives.
     } else if (paymentMethod === 'cash') {
       // For cash payments, no need to process anything here
     }
 
-    // The server owns the amount, currency, and initial payment state.
+    // These values are server-owned even when the request includes conflicting
+    // totalAmount, currency, status, or paymentStatus properties.
     const order = new Order({
       userId,
       items: enrichedItems,

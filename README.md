@@ -103,7 +103,16 @@ flowchart TD
 node scripts/seed-security-fixtures.mjs reset
 node scripts/seed-security-fixtures.mjs verify
 
-# Run focused V1–V7 checks as listed in the finding matrix.
+# Run source-level guards for all seven remediations.
+node security-tests/regression-v1-v3.mjs
+node security-tests/regression-v4-v7.mjs
+
+# With the Compose services and synthetic fixtures running, exercise the
+# blocked attacks and authorized controls. Use the same local-only JWT secret
+# configured for the affected services.
+JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v1-v3.mjs
+JWT_SECRET="$LOCAL_JWT_SECRET" node security-tests/runtime-v4-v7.mjs
+
 # Run OIDC checks under Node 20.
 node security-tests/regression-oidc.mjs
 NODE_ENV=development node security-tests/oidc-mocked.mjs

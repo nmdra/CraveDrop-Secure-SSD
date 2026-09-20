@@ -80,7 +80,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** The service does not prove device integrity or GPS accuracy.
 
-**Evidence and commits:** `evidence/V4-before.txt`, `evidence/V4-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
+**Evidence and commits:** `evidence/V4-before.txt`, `evidence/V4-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `729c52e`, and `b78b635`.
 
 ## V5: Broken administrative authorization
 
@@ -98,7 +98,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** This finding covers driver availability only. Restaurant administration requires separate review before it can be claimed as protected.
 
-**Evidence and commits:** `evidence/V5-before.txt`, `evidence/V5-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
+**Evidence and commits:** `evidence/V5-before.txt`, `evidence/V5-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `729c52e`, and `b78b635`.
 
 ## V6: Payment amount and state manipulation
 
@@ -116,7 +116,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** A later payment confirmation must remain bound to trusted order data and a verified provider event.
 
-**Evidence and commits:** `evidence/V6-before.txt`, `evidence/V6-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
+**Evidence and commits:** `evidence/V6-before.txt`, `evidence/V6-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `729c52e`, and `b78b635`.
 
 ## V7: Sensitive token disclosure and session design
 
@@ -134,7 +134,7 @@ Use this document as the factual source for the final report. Do not claim a res
 
 **Residual risk:** XSS can still perform same-origin actions while a session exists. Content Security Policy and broader XSS review remain future work.
 
-**Evidence and commits:** `evidence/V7-before.txt`, `evidence/V7-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `c84ec0a`, and `132f768`.
+**Evidence and commits:** `evidence/V7-before.txt`, `evidence/V7-after.txt`, `security-tests/runtime-v4-v7.mjs`, `security-tests/regression-v4-v7.mjs`, `729c52e`, and `b78b635`.
 
 ## WSO2 OIDC customer-login feature
 

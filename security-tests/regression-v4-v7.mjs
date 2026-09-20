@@ -24,6 +24,8 @@ const tokenUtils = read('user-service/src/utils/generateToken.js');
 const loginHook = read('frontend/src/Hooks/useLogin.jsx');
 const browserAxios = read('frontend/src/axios.jsx');
 
+// These source checks are fast tripwires for the security boundaries that the
+// runtime suite verifies with denied attacks and successful authorised flows.
 expect(deliveryRoutes.includes('authenticateDeliveryActor, updateDeliveryStatus'), 'V4 status route lacks authentication');
 expect(deliveryRoutes.includes('authenticateDeliveryActor, updateDriverLocation'), 'V4 location route lacks authentication');
 expect(deliveryController.includes("String(delivery.driverid) !== String(req.actorId)"), 'V4 assigned-driver ownership check is missing');
@@ -33,6 +35,7 @@ expect(driverRoutes.includes("router.put('/:id/availability', protect, updateDri
 expect(driverController.includes("String(req.driver?._id) !== String(driverId)"), 'V5 driver ownership check is missing');
 expect(!driverAuth.includes('token.substring'), 'V5 driver middleware still logs a token prefix');
 
+// Pricing, currency, and initial state must remain independent of request data.
 expect(orderController.includes('totalAmount: calculatedTotalAmount'), 'V6 does not persist the calculated server total');
 expect(orderController.includes("currency: 'usd'"), 'V6 currency is not server-owned');
 expect(orderController.includes("status: 'pending'"), 'V6 card orders are still marked paid before confirmation');

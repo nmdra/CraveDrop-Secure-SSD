@@ -64,6 +64,8 @@ const assertBody = (name, result, predicate) => {
 
 const bearer = (token) => ({ Authorization: `Bearer ${token}` });
 
+// V4 exercises the complete authorization matrix: unauthenticated, wrong role,
+// wrong driver, assigned driver, invalid transition, and valid location update.
 assertStatus(
   'V4 anonymous delivery status update is blocked',
   await request(`${deliveryUrl}/delivery/${deliveryA}/status`, {
@@ -149,6 +151,8 @@ await request(`${driverUrl}/driver/${driverA}/availability`, {
   body: JSON.stringify({ isAvailable: true }),
 });
 
+// V6 deliberately submits every untrusted payment field with unsafe values;
+// the response must reflect only catalogue-derived and server-owned values.
 const tamperedOrder = await request(`${orderUrl}/api/orders`, {
   method: 'POST',
   headers: { ...json({}).headers, ...bearer(tokenFor({ userId: customerA })) },
